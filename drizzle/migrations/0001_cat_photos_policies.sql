@@ -1,0 +1,2 @@
+CREATE POLICY "cat photos read" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'cat-photos');
+CREATE POLICY "cat photos upload" ON storage.objects FOR INSERT TO anon, authenticated WITH CHECK (bucket_id = 'cat-photos');
