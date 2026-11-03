@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Plus, Mail, Phone, Home, X, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
+import { setApplicationStatus, saveSettings as saveSettingsFn } from "@/lib/data.functions";
 import { appsQuery, catsQuery, settingsQuery } from "@/lib/shelter";
 import { PageHeader } from "@/components/AppShell";
 import { submitApplication } from "@/lib/shelter.functions";
@@ -63,13 +63,14 @@ function Applications() {
     } finally { setBusy(false); }
   }
   async function setStatus(id: string, status: string, cat_id: string | null) {
-    await supabase.from("applications").update({ status }).eq("id", id);
-    if (status === "approved" && cat_id) await supabase.from("cats").update({ stage: "adopted" }).eq("id", cat_id);
+    void cat_id;
+    await setApplicationStatus({ data: { id, status: status as "approved" } });
     qc.invalidateQueries();
     toast.success(`Application ${status}`);
   }
   async function saveSettings() {
-    await supabase.from("settings").update({ staff_email: staff || settings?.staff_email || null, capacity: cap ? Number(cap) : capacity }).eq("id", 1);
+    try { await saveSettingsFn({ data: { staff_email: staff.trim() || null, capacity: cap ? Number(cap) : capacity } }); }
+    catch { toast.error("Please enter a valid email and capacity"); return; }
     qc.invalidateQueries({ queryKey: ["settings"] });
     setShowSettings(false);
     toast.success("Settings saved");

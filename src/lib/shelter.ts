@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { listCats, listTasks, listApplications, getSettings } from "@/lib/data.functions";
 import type { Database } from "@/integrations/supabase/types";
 
 export type Cat = Database["public"]["Tables"]["cats"]["Row"];
@@ -15,38 +15,10 @@ export const STAGES = [
 
 export const stageOf = (id: string) => STAGES.find((s) => s.id === id) ?? STAGES[0];
 
-export const catsQuery = {
-  queryKey: ["cats"],
-  queryFn: async () => {
-    const { data, error } = await supabase.from("cats").select("*").order("created_at", { ascending: false });
-    if (error) throw error;
-    return data;
-  },
-};
-export const tasksQuery = {
-  queryKey: ["tasks"],
-  queryFn: async () => {
-    const { data, error } = await supabase.from("tasks").select("*").order("created_at");
-    if (error) throw error;
-    return data;
-  },
-};
-export const appsQuery = {
-  queryKey: ["applications"],
-  queryFn: async () => {
-    const { data, error } = await supabase.from("applications").select("*").order("created_at", { ascending: false });
-    if (error) throw error;
-    return data;
-  },
-};
-export const settingsQuery = {
-  queryKey: ["settings"],
-  queryFn: async () => {
-    const { data, error } = await supabase.from("settings").select("*").eq("id", 1).single();
-    if (error) throw error;
-    return data;
-  },
-};
+export const catsQuery = { queryKey: ["cats"], queryFn: () => listCats() };
+export const tasksQuery = { queryKey: ["tasks"], queryFn: () => listTasks() };
+export const appsQuery = { queryKey: ["applications"], queryFn: () => listApplications() };
+export const settingsQuery = { queryKey: ["settings"], queryFn: () => getSettings() };
 
 export async function fileToDataUrl(file: File, max = 640): Promise<string> {
   const img = await createImageBitmap(file);

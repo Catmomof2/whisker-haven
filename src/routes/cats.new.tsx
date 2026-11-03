@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Camera, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { createCat } from "@/lib/data.functions";
 import { fileToDataUrl } from "@/lib/shelter";
 
 export const Route = createFileRoute("/cats/new")({
@@ -35,20 +35,21 @@ function NewIntake() {
     e.preventDefault();
     if (!f.name.trim()) { toast.error("Name is required"); return; }
     setSaving(true);
-    const { data, error } = await supabase
-      .from("cats")
-      .insert({
+    let data: { id: string };
+    try {
+      data = await createCat({ data: {
         ...f,
         name: f.name.trim(),
         age_years: f.age_years ? Number(f.age_years) : null,
         tags: f.tags.split(",").map((t) => t.trim()).filter(Boolean),
         photo_url: photo,
-        stage: "intake",
-      })
-      .select("id")
-      .single();
+      } });
+    } catch {
+      setSaving(false);
+      toast.error("Couldn't save. Check the fields and try again.");
+      return;
+    }
     setSaving(false);
-    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["cats"] });
     toast.success(`${f.name} checked in`);
     nav({ to: "/cats/$id", params: { id: data.id } });
