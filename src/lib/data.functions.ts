@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 // All database access goes through these narrow, validated server functions.
 // Tables have no anon/authenticated RLS policies; only the server (service role) can reach them.
@@ -46,7 +47,7 @@ export const listCats = createServerFn({ method: "GET" }).handler(async () => {
 export const createCat = createServerFn({ method: "POST" })
   .inputValidator((d) => catFields.parse(d))
   .handler(async ({ data }) => {
-    const { data: row, error } = await (await admin()).from("cats").insert({ ...data, stage: "intake" }).select("id").single();
+    const { data: row, error } = await (await admin()).from("cats").insert({ ...data, stage: "intake" } as TablesInsert<"cats">).select("id").single();
     fail(error);
     return { id: row!.id };
   });
@@ -54,7 +55,7 @@ export const createCat = createServerFn({ method: "POST" })
 export const updateCat = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ id: z.string().uuid(), patch: catFields.partial() }).parse(d))
   .handler(async ({ data }) => {
-    const { error } = await (await admin()).from("cats").update(data.patch).eq("id", data.id);
+    const { error } = await (await admin()).from("cats").update(data.patch as TablesUpdate<"cats">).eq("id", data.id);
     fail(error);
     return { ok: true };
   });
