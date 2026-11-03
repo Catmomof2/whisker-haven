@@ -14,7 +14,205 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          applicant_name: string
+          cat_id: string | null
+          created_at: string
+          email: string
+          home_type: string | null
+          id: string
+          message: string | null
+          other_pets: string | null
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          applicant_name: string
+          cat_id?: string | null
+          created_at?: string
+          email: string
+          home_type?: string | null
+          id?: string
+          message?: string | null
+          other_pets?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          applicant_name?: string
+          cat_id?: string | null
+          created_at?: string
+          email?: string
+          home_type?: string | null
+          id?: string
+          message?: string | null
+          other_pets?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_cat_id_fkey"
+            columns: ["cat_id"]
+            isOneToOne: false
+            referencedRelation: "cats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cats: {
+        Row: {
+          age_years: number | null
+          bio: string | null
+          breed: string | null
+          caption: string | null
+          color: string | null
+          created_at: string
+          diet: string | null
+          health_notes: string | null
+          id: string
+          intake_date: string
+          intake_location: string | null
+          medications: string | null
+          microchip_id: string | null
+          name: string
+          photo_url: string | null
+          priority: boolean
+          sex: string | null
+          spay_neuter: boolean
+          stage: string
+          tags: string[]
+          temperament: string | null
+          vaccinations: string | null
+        }
+        Insert: {
+          age_years?: number | null
+          bio?: string | null
+          breed?: string | null
+          caption?: string | null
+          color?: string | null
+          created_at?: string
+          diet?: string | null
+          health_notes?: string | null
+          id?: string
+          intake_date?: string
+          intake_location?: string | null
+          medications?: string | null
+          microchip_id?: string | null
+          name: string
+          photo_url?: string | null
+          priority?: boolean
+          sex?: string | null
+          spay_neuter?: boolean
+          stage?: string
+          tags?: string[]
+          temperament?: string | null
+          vaccinations?: string | null
+        }
+        Update: {
+          age_years?: number | null
+          bio?: string | null
+          breed?: string | null
+          caption?: string | null
+          color?: string | null
+          created_at?: string
+          diet?: string | null
+          health_notes?: string | null
+          id?: string
+          intake_date?: string
+          intake_location?: string | null
+          medications?: string | null
+          microchip_id?: string | null
+          name?: string
+          photo_url?: string | null
+          priority?: boolean
+          sex?: string | null
+          spay_neuter?: boolean
+          stage?: string
+          tags?: string[]
+          temperament?: string | null
+          vaccinations?: string | null
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          capacity: number
+          id: number
+          staff_email: string | null
+        }
+        Insert: {
+          capacity?: number
+          id?: number
+          staff_email?: string | null
+        }
+        Update: {
+          capacity?: number
+          id?: number
+          staff_email?: string | null
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          category: string
+          created_at: string
+          done: boolean
+          id: string
+          time_slot: string | null
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          done?: boolean
+          id?: string
+          time_slot?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          done?: boolean
+          id?: string
+          time_slot?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      vet_logs: {
+        Row: {
+          cat_id: string
+          created_at: string
+          id: string
+          note: string
+          visit_date: string
+        }
+        Insert: {
+          cat_id: string
+          created_at?: string
+          id?: string
+          note: string
+          visit_date?: string
+        }
+        Update: {
+          cat_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          visit_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vet_logs_cat_id_fkey"
+            columns: ["cat_id"]
+            isOneToOne: false
+            referencedRelation: "cats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
