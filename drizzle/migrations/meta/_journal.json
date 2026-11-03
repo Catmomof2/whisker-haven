@@ -8,6 +8,13 @@
       "when": 1793702375350,
       "tag": "0000_shelter_core",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793702827410,
+      "tag": "0001_cat_photos_policies",
+      "breakpoints": true
     }
   ]
 }
