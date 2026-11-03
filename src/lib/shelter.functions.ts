@@ -72,8 +72,8 @@ export const submitApplication = createServerFn({ method: "POST" })
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.LOVABLE_API_KEY}`,
-          "X-Connection-Api-Key": process.env.RESEND_API_KEY ?? "",
+          Authorization: `Bearer ${process.env['LOVABLE_API_KEY']}`,
+          "X-Connection-Api-Key": process.env['RESEND_API_KEY'] ?? "",
         },
         body: JSON.stringify({
           from: "Whisker Haven <onboarding@resend.dev>",

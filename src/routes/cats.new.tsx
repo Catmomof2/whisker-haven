@@ -33,7 +33,7 @@ function NewIntake() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (!f.name.trim()) return toast.error("Name is required");
+    if (!f.name.trim()) { toast.error("Name is required"); return; }
     setSaving(true);
     const { data, error } = await supabase
       .from("cats")
@@ -48,7 +48,7 @@ function NewIntake() {
       .select("id")
       .single();
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["cats"] });
     toast.success(`${f.name} checked in`);
     nav({ to: "/cats/$id", params: { id: data.id } });

@@ -55,7 +55,7 @@ export function StageBadge({ stage, priority }: { stage: string; priority?: bool
     foster: ["Foster", "bg-foster text-foster-foreground"],
     adopted: ["Adopted", "bg-adopted text-adopted-foreground"],
   };
-  const [label, cls] = map[stage] ?? map.intake;
+  const [label, cls] = map[stage] ?? ["Intake", "bg-intake text-intake-foreground"];
   return (
     <span className="inline-flex gap-1">
       <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${cls}`}>{label}</span>

@@ -69,7 +69,7 @@ function Applications() {
     toast.success(`Application ${status}`);
   }
   async function saveSettings() {
-    await supabase.from("settings").update({ staff_email: staff || settings?.staff_email, capacity: cap ? Number(cap) : capacity }).eq("id", 1);
+    await supabase.from("settings").update({ staff_email: staff || settings?.staff_email || null, capacity: cap ? Number(cap) : capacity }).eq("id", 1);
     qc.invalidateQueries({ queryKey: ["settings"] });
     setShowSettings(false);
     toast.success("Settings saved");

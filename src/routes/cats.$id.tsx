@@ -48,7 +48,7 @@ function CatProfile() {
     const next = { ...d!, ...patch };
     const { id: _i, created_at: _c, ...rest } = next;
     const { error } = await supabase.from("cats").update(rest).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setD(next);
     qc.invalidateQueries({ queryKey: ["cats"] });
     toast.success("Saved");
