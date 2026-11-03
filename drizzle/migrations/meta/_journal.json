@@ -15,6 +15,13 @@
       "when": 1793702827410,
       "tag": "0001_cat_photos_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793702951518,
+      "tag": "0002_lock_down_rls",
+      "breakpoints": true
     }
   ]
 }
