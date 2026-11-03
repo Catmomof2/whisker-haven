@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CatsIndexRouteImport } from './routes/cats.index'
+import { Route as CatsNewRouteImport } from './routes/cats.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CatsIndexRoute = CatsIndexRouteImport.update({
+  id: '/cats/',
+  path: '/cats/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatsNewRoute = CatsNewRouteImport.update({
+  id: '/cats/new',
+  path: '/cats/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cats/new': typeof CatsNewRoute
+  '/cats/': typeof CatsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cats/new': typeof CatsNewRoute
+  '/cats': typeof CatsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cats/new': typeof CatsNewRoute
+  '/cats/': typeof CatsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/cats/new' | '/cats/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/cats/new' | '/cats'
+  id: '__root__' | '/' | '/cats/new' | '/cats/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CatsNewRoute: typeof CatsNewRoute
+  CatsIndexRoute: typeof CatsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cats/': {
+      id: '/cats/'
+      path: '/cats'
+      fullPath: '/cats/'
+      preLoaderRoute: typeof CatsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cats/new': {
+      id: '/cats/new'
+      path: '/cats/new'
+      fullPath: '/cats/new'
+      preLoaderRoute: typeof CatsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CatsNewRoute: CatsNewRoute,
+  CatsIndexRoute: CatsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

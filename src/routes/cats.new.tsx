@@ -20,7 +20,7 @@ export const Route = createFileRoute("/cats/new")({
   component: NewIntake,
 });
 
-export const field = "w-full rounded-xl border border-input bg-card px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring";
+const field = "w-full rounded-xl border border-input bg-card px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring";
 const label = "mb-1 block text-xs font-bold text-muted-foreground";
 
 function NewIntake() {
