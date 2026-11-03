@@ -10,7 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApplicationsRouteImport } from './routes/applications'
+import { Route as BoardRouteImport } from './routes/board'
+import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as CatsIndexRouteImport } from './routes/cats.index'
+import { Route as CatsIdRouteImport } from './routes/cats.$id'
 import { Route as CatsNewRouteImport } from './routes/cats.new'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +22,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApplicationsRoute = ApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoardRoute = BoardRouteImport.update({
+  id: '/board',
+  path: '/board',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CatsIndexRoute = CatsIndexRouteImport.update({
   id: '/cats/',
   path: '/cats/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatsIdRoute = CatsIdRouteImport.update({
+  id: '/cats/$id',
+  path: '/cats/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatsNewRoute = CatsNewRouteImport.update({
@@ -31,30 +55,68 @@ const CatsNewRoute = CatsNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/applications': typeof ApplicationsRoute
+  '/board': typeof BoardRoute
+  '/tasks': typeof TasksRoute
+  '/cats/$id': typeof CatsIdRoute
   '/cats/new': typeof CatsNewRoute
   '/cats/': typeof CatsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/applications': typeof ApplicationsRoute
+  '/board': typeof BoardRoute
+  '/tasks': typeof TasksRoute
+  '/cats/$id': typeof CatsIdRoute
   '/cats/new': typeof CatsNewRoute
   '/cats': typeof CatsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/applications': typeof ApplicationsRoute
+  '/board': typeof BoardRoute
+  '/tasks': typeof TasksRoute
+  '/cats/$id': typeof CatsIdRoute
   '/cats/new': typeof CatsNewRoute
   '/cats/': typeof CatsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cats/new' | '/cats/'
+  fullPaths:
+    | '/'
+    | '/applications'
+    | '/board'
+    | '/tasks'
+    | '/cats/$id'
+    | '/cats/new'
+    | '/cats/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cats/new' | '/cats'
-  id: '__root__' | '/' | '/cats/new' | '/cats/'
+  to:
+    | '/'
+    | '/applications'
+    | '/board'
+    | '/tasks'
+    | '/cats/$id'
+    | '/cats/new'
+    | '/cats'
+  id:
+    | '__root__'
+    | '/'
+    | '/applications'
+    | '/board'
+    | '/tasks'
+    | '/cats/$id'
+    | '/cats/new'
+    | '/cats/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApplicationsRoute: typeof ApplicationsRoute
+  BoardRoute: typeof BoardRoute
+  TasksRoute: typeof TasksRoute
+  CatsIdRoute: typeof CatsIdRoute
   CatsNewRoute: typeof CatsNewRoute
   CatsIndexRoute: typeof CatsIndexRoute
 }
@@ -68,11 +130,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/applications': {
+      id: '/applications'
+      path: '/applications'
+      fullPath: '/applications'
+      preLoaderRoute: typeof ApplicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/board': {
+      id: '/board'
+      path: '/board'
+      fullPath: '/board'
+      preLoaderRoute: typeof BoardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cats/': {
       id: '/cats/'
       path: '/cats'
       fullPath: '/cats/'
       preLoaderRoute: typeof CatsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cats/$id': {
+      id: '/cats/$id'
+      path: '/cats/$id'
+      fullPath: '/cats/$id'
+      preLoaderRoute: typeof CatsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cats/new': {
@@ -87,6 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApplicationsRoute: ApplicationsRoute,
+  BoardRoute: BoardRoute,
+  TasksRoute: TasksRoute,
+  CatsIdRoute: CatsIdRoute,
   CatsNewRoute: CatsNewRoute,
   CatsIndexRoute: CatsIndexRoute,
 }
