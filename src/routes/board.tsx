@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { updateCat } from "@/lib/data.functions";
 import { catsQuery, STAGES, type Cat } from "@/lib/shelter";
 import { CatAvatar } from "@/components/AppShell";
 
@@ -27,7 +27,7 @@ function Board() {
 
   async function move(cat: Cat, stage: string) {
     qc.setQueryData<Cat[]>(["cats"], (old) => old?.map((c) => (c.id === cat.id ? { ...c, stage } : c)));
-    await supabase.from("cats").update({ stage }).eq("id", cat.id);
+    await updateCat({ data: { id: cat.id, patch: { stage: stage as "intake" } } });
     qc.invalidateQueries({ queryKey: ["cats"] });
   }
   const shift = (cat: Cat, dir: number) => {

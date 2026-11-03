@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Check, Plus, RotateCcw, Trash2, Utensils, Pill, Sparkles } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { addTask, setTaskDone, deleteTask, resetTasks } from "@/lib/data.functions";
 import { tasksQuery, type Task } from "@/lib/shelter";
 import { PageHeader } from "@/components/AppShell";
 
@@ -37,13 +37,13 @@ function Tasks() {
 
   async function toggle(t: Task) {
     qc.setQueryData<Task[]>(["tasks"], (o) => o?.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)));
-    await supabase.from("tasks").update({ done: !t.done }).eq("id", t.id);
+    await setTaskDone({ data: { id: t.id, done: !t.done } });
     refresh();
   }
   async function add(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) return;
-    await supabase.from("tasks").insert({ title: title.trim(), category: cat, time_slot: time || null });
+    await addTask({ data: { title: title.trim(), category: cat as "feeding", time_slot: time || null } });
     setTitle(""); setTime(""); refresh();
   }
 
@@ -52,7 +52,7 @@ function Tasks() {
       <PageHeader
         title="Today's tasks"
         subtitle={`${done} of ${tasks.length} complete`}
-        action={<button onClick={async () => { await supabase.from("tasks").update({ done: false }).neq("id", "00000000-0000-0000-0000-000000000000"); refresh(); }} className="inline-flex items-center gap-1 rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold"><RotateCcw className="h-3.5 w-3.5" />New day</button>}
+        action={<button onClick={async () => { await resetTasks(); refresh(); }} className="inline-flex items-center gap-1 rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold"><RotateCcw className="h-3.5 w-3.5" />New day</button>}
       />
       <div className="space-y-4 px-5">
         <div className="h-2.5 overflow-hidden rounded-full bg-secondary">
@@ -73,7 +73,7 @@ function Tasks() {
                     <p className={`text-sm font-semibold ${t.done ? "text-muted-foreground line-through" : ""}`}>{t.title}</p>
                     {t.time_slot && <p className="text-[11px] text-muted-foreground">{t.time_slot}</p>}
                   </div>
-                  <button aria-label="Delete" onClick={async () => { await supabase.from("tasks").delete().eq("id", t.id); refresh(); }} className="text-muted-foreground"><Trash2 className="h-4 w-4" /></button>
+                  <button aria-label="Delete" onClick={async () => { await deleteTask({ data: { id: t.id } }); refresh(); }} className="text-muted-foreground"><Trash2 className="h-4 w-4" /></button>
                 </div>
               ))}
             </section>

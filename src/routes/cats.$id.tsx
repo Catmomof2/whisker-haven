@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Sparkles, Copy, Stethoscope, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
+import { updateCat, listVetLogs, addVetLog } from "@/lib/data.functions";
 import { catsQuery, STAGES, fileToDataUrl, type Cat } from "@/lib/shelter";
 import { StageBadge, CatAvatar } from "@/components/AppShell";
 import { generateBio } from "@/lib/shelter.functions";
@@ -36,7 +36,7 @@ function CatProfile() {
   const bioFn = useServerFn(generateBio);
   const logs = useQuery({
     queryKey: ["vet_logs", id],
-    queryFn: async () => (await supabase.from("vet_logs").select("*").eq("cat_id", id).order("visit_date", { ascending: false })).data ?? [],
+    queryFn: () => listVetLogs({ data: { cat_id: id } }),
   });
   const [visit, setVisit] = useState({ visit_date: new Date().toISOString().slice(0, 10), note: "" });
 
@@ -46,9 +46,8 @@ function CatProfile() {
   const up = (patch: Partial<Cat>) => setD({ ...d, ...patch });
   async function save(patch: Partial<Cat> = {}) {
     const next = { ...d!, ...patch };
-    const { id: _i, created_at: _c, ...rest } = next;
-    const { error } = await supabase.from("cats").update(rest).eq("id", id);
-    if (error) { toast.error(error.message); return; }
+    const { id: _i, created_at: _c, intake_date: _d, ...rest } = next;
+    try { await updateCat({ data: { id, patch: rest } }); } catch { toast.error("Couldn't save. Check the fields and try again."); return; }
     setD(next);
     qc.invalidateQueries({ queryKey: ["cats"] });
     toast.success("Saved");
@@ -67,7 +66,7 @@ function CatProfile() {
   }
   async function addVisit() {
     if (!visit.note.trim()) return;
-    await supabase.from("vet_logs").insert({ cat_id: id, ...visit });
+    await addVetLog({ data: { cat_id: id, ...visit } });
     setVisit({ ...visit, note: "" });
     logs.refetch();
   }
