@@ -9,7 +9,7 @@ import { appsQuery, catsQuery, settingsQuery } from "@/lib/shelter";
 import { PageHeader } from "@/components/AppShell";
 import { submitApplication } from "@/lib/shelter.functions";
 
-export const Route = createFileRoute("/applications")({
+export const Route = createFileRoute("/_authenticated/applications")({
   head: () => ({
     meta: [
       { title: "Adoption Applications — Whisker Haven Shelter" },

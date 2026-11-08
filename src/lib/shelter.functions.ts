@@ -1,13 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateResponse } from "@lovable.dev/ai-gateway";
+import { requireStaff } from "@/lib/staff";
 
 const bioInput = z.object({
   name: z.string().max(100),
   traits: z.string().max(3000),
 });
 
-export const generateBio = createServerFn({ method: "POST" })
+export const generateBio = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => bioInput.parse(d))
   .handler(async ({ data }) => {
     const res = await generateResponse({

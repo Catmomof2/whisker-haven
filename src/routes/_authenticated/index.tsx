@@ -4,7 +4,7 @@ import { Plus, Kanban, AlertTriangle, ChevronRight } from "lucide-react";
 import { PageHeader, StageBadge, CatAvatar } from "@/components/AppShell";
 import { catsQuery, tasksQuery, appsQuery, settingsQuery, STAGES } from "@/lib/shelter";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Dashboard — Whisker Haven Shelter" },

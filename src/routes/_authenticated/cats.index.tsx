@@ -5,7 +5,7 @@ import { Plus, Search, Kanban } from "lucide-react";
 import { PageHeader, StageBadge, CatAvatar } from "@/components/AppShell";
 import { catsQuery, STAGES } from "@/lib/shelter";
 
-export const Route = createFileRoute("/cats/")({
+export const Route = createFileRoute("/_authenticated/cats/")({
   head: () => ({
     meta: [
       { title: "Cats — Whisker Haven Shelter" },

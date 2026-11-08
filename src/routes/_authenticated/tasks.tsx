@@ -6,7 +6,7 @@ import { addTask, setTaskDone, deleteTask, resetTasks } from "@/lib/data.functio
 import { tasksQuery, type Task } from "@/lib/shelter";
 import { PageHeader } from "@/components/AppShell";
 
-export const Route = createFileRoute("/tasks")({
+export const Route = createFileRoute("/_authenticated/tasks")({
   head: () => ({
     meta: [
       { title: "Daily Tasks — Whisker Haven Shelter" },

@@ -6,7 +6,7 @@ import { updateCat } from "@/lib/data.functions";
 import { catsQuery, STAGES, type Cat } from "@/lib/shelter";
 import { CatAvatar } from "@/components/AppShell";
 
-export const Route = createFileRoute("/board")({
+export const Route = createFileRoute("/_authenticated/board")({
   head: () => ({
     meta: [
       { title: "Workflow Board — Whisker Haven Shelter" },
