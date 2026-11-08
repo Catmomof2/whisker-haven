@@ -9,180 +9,181 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApplicationsRouteImport } from './routes/applications'
-import { Route as BoardRouteImport } from './routes/board'
-import { Route as TasksRouteImport } from './routes/tasks'
-import { Route as CatsIndexRouteImport } from './routes/cats.index'
-import { Route as CatsIdRouteImport } from './routes/cats.$id'
-import { Route as CatsNewRouteImport } from './routes/cats.new'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated/applications'
+import { Route as AuthenticatedBoardRouteImport } from './routes/_authenticated/board'
+import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as AuthenticatedCatsIndexRouteImport } from './routes/_authenticated/cats.index'
+import { Route as AuthenticatedCatsIdRouteImport } from './routes/_authenticated/cats.$id'
+import { Route as AuthenticatedCatsNewRouteImport } from './routes/_authenticated/cats.new'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/_authenticated/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApplicationsRoute = ApplicationsRouteImport.update({
-  id: '/applications',
-  path: '/applications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoardRoute = BoardRouteImport.update({
-  id: '/board',
+const AuthenticatedApplicationsRoute =
+  AuthenticatedApplicationsRouteImport.update({
+    id: '/_authenticated/applications',
+    path: '/applications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedBoardRoute = AuthenticatedBoardRouteImport.update({
+  id: '/_authenticated/board',
   path: '/board',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TasksRoute = TasksRouteImport.update({
-  id: '/tasks',
+const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
+  id: '/_authenticated/tasks',
   path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CatsIndexRoute = CatsIndexRouteImport.update({
-  id: '/cats/',
+const AuthenticatedCatsIndexRoute = AuthenticatedCatsIndexRouteImport.update({
+  id: '/_authenticated/cats/',
   path: '/cats/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CatsIdRoute = CatsIdRouteImport.update({
-  id: '/cats/$id',
+const AuthenticatedCatsIdRoute = AuthenticatedCatsIdRouteImport.update({
+  id: '/_authenticated/cats/$id',
   path: '/cats/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CatsNewRoute = CatsNewRouteImport.update({
-  id: '/cats/new',
+const AuthenticatedCatsNewRoute = AuthenticatedCatsNewRouteImport.update({
+  id: '/_authenticated/cats/new',
   path: '/cats/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/applications': typeof ApplicationsRoute
-  '/board': typeof BoardRoute
-  '/tasks': typeof TasksRoute
-  '/cats/$id': typeof CatsIdRoute
-  '/cats/new': typeof CatsNewRoute
-  '/cats/': typeof CatsIndexRoute
+  '/applications': typeof AuthenticatedApplicationsRoute
+  '/board': typeof AuthenticatedBoardRoute
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/cats/$id': typeof AuthenticatedCatsIdRoute
+  '/cats/new': typeof AuthenticatedCatsNewRoute
+  '/cats/': typeof AuthenticatedCatsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/applications': typeof ApplicationsRoute
-  '/board': typeof BoardRoute
-  '/tasks': typeof TasksRoute
-  '/cats/$id': typeof CatsIdRoute
-  '/cats/new': typeof CatsNewRoute
-  '/cats': typeof CatsIndexRoute
+  '/applications': typeof AuthenticatedApplicationsRoute
+  '/board': typeof AuthenticatedBoardRoute
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/cats/$id': typeof AuthenticatedCatsIdRoute
+  '/cats/new': typeof AuthenticatedCatsNewRoute
+  '/cats': typeof AuthenticatedCatsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/applications': typeof ApplicationsRoute
-  '/board': typeof BoardRoute
-  '/tasks': typeof TasksRoute
-  '/cats/$id': typeof CatsIdRoute
-  '/cats/new': typeof CatsNewRoute
-  '/cats/': typeof CatsIndexRoute
+  '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
+  '/_authenticated/board': typeof AuthenticatedBoardRoute
+  '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/cats/$id': typeof AuthenticatedCatsIdRoute
+  '/_authenticated/cats/new': typeof AuthenticatedCatsNewRoute
+  '/_authenticated/cats/': typeof AuthenticatedCatsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/applications'
     | '/board'
     | '/tasks'
+    | '/'
     | '/cats/$id'
     | '/cats/new'
     | '/cats/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/applications'
     | '/board'
     | '/tasks'
+    | '/'
     | '/cats/$id'
     | '/cats/new'
     | '/cats'
   id:
     | '__root__'
-    | '/'
-    | '/applications'
-    | '/board'
-    | '/tasks'
-    | '/cats/$id'
-    | '/cats/new'
-    | '/cats/'
+    | '/_authenticated/applications'
+    | '/_authenticated/board'
+    | '/_authenticated/tasks'
+    | '/_authenticated/'
+    | '/_authenticated/cats/$id'
+    | '/_authenticated/cats/new'
+    | '/_authenticated/cats/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ApplicationsRoute: typeof ApplicationsRoute
-  BoardRoute: typeof BoardRoute
-  TasksRoute: typeof TasksRoute
-  CatsIdRoute: typeof CatsIdRoute
-  CatsNewRoute: typeof CatsNewRoute
-  CatsIndexRoute: typeof CatsIndexRoute
+  AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
+  AuthenticatedBoardRoute: typeof AuthenticatedBoardRoute
+  AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCatsIdRoute: typeof AuthenticatedCatsIdRoute
+  AuthenticatedCatsNewRoute: typeof AuthenticatedCatsNewRoute
+  AuthenticatedCatsIndexRoute: typeof AuthenticatedCatsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/applications': {
-      id: '/applications'
+    '/_authenticated/applications': {
+      id: '/_authenticated/applications'
       path: '/applications'
       fullPath: '/applications'
-      preLoaderRoute: typeof ApplicationsRouteImport
+      preLoaderRoute: typeof AuthenticatedApplicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/board': {
-      id: '/board'
+    '/_authenticated/board': {
+      id: '/_authenticated/board'
       path: '/board'
       fullPath: '/board'
-      preLoaderRoute: typeof BoardRouteImport
+      preLoaderRoute: typeof AuthenticatedBoardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tasks': {
-      id: '/tasks'
+    '/_authenticated/tasks': {
+      id: '/_authenticated/tasks'
       path: '/tasks'
       fullPath: '/tasks'
-      preLoaderRoute: typeof TasksRouteImport
+      preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cats/': {
-      id: '/cats/'
+    '/_authenticated/cats/': {
+      id: '/_authenticated/cats/'
       path: '/cats'
       fullPath: '/cats/'
-      preLoaderRoute: typeof CatsIndexRouteImport
+      preLoaderRoute: typeof AuthenticatedCatsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cats/$id': {
-      id: '/cats/$id'
+    '/_authenticated/cats/$id': {
+      id: '/_authenticated/cats/$id'
       path: '/cats/$id'
       fullPath: '/cats/$id'
-      preLoaderRoute: typeof CatsIdRouteImport
+      preLoaderRoute: typeof AuthenticatedCatsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cats/new': {
-      id: '/cats/new'
+    '/_authenticated/cats/new': {
+      id: '/_authenticated/cats/new'
       path: '/cats/new'
       fullPath: '/cats/new'
-      preLoaderRoute: typeof CatsNewRouteImport
+      preLoaderRoute: typeof AuthenticatedCatsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ApplicationsRoute: ApplicationsRoute,
-  BoardRoute: BoardRoute,
-  TasksRoute: TasksRoute,
-  CatsIdRoute: CatsIdRoute,
-  CatsNewRoute: CatsNewRoute,
-  CatsIndexRoute: CatsIndexRoute,
+  AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
+  AuthenticatedBoardRoute: AuthenticatedBoardRoute,
+  AuthenticatedTasksRoute: AuthenticatedTasksRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCatsIdRoute: AuthenticatedCatsIdRoute,
+  AuthenticatedCatsNewRoute: AuthenticatedCatsNewRoute,
+  AuthenticatedCatsIndexRoute: AuthenticatedCatsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

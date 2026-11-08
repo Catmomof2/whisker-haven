@@ -93,3 +93,18 @@ export const submitApplication = createServerFn({ method: "POST" })
     }
     return { id: row.id, emailStatus };
   });
+
+// Public: only adoptable cats, only safe display fields.
+export const listAdoptableCats = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("cats")
+    .select("id, name, photo_url, breed, color, age_years, sex, temperament, bio")
+    .eq("stage", "available")
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error(error);
+    throw new Error("Could not load cats");
+  }
+  return data ?? [];
+});
