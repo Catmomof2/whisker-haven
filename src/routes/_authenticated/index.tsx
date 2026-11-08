@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Plus, Kanban, AlertTriangle, ChevronRight } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { LogOut, Globe, Plus, Kanban, AlertTriangle, ChevronRight } from "lucide-react";
 import { PageHeader, StageBadge, CatAvatar } from "@/components/AppShell";
 import { catsQuery, tasksQuery, appsQuery, settingsQuery, STAGES } from "@/lib/shelter";
 
@@ -23,6 +24,14 @@ function Dashboard() {
   const { data: tasks = [] } = useQuery(tasksQuery);
   const { data: apps = [] } = useQuery(appsQuery);
   const { data: settings } = useQuery(settingsQuery);
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  async function signOut() {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", search: {}, replace: true });
+  }
   const inCare = cats.filter((c) => c.stage !== "adopted").length;
   const cap = settings?.capacity ?? 40;
   const pct = Math.min(100, Math.round((inCare / cap) * 100));
@@ -32,7 +41,14 @@ function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Whisker Haven" subtitle="Good day! Here's the shelter today." />
+      <PageHeader title="Whisker Haven" subtitle="Good day! Here's the shelter today."
+        action={
+          <div className="flex gap-2">
+            <Link to="/adopt" aria-label="Public adoption page" className="rounded-full border border-border bg-card p-2.5"><Globe className="h-4 w-4" /></Link>
+            <button onClick={signOut} aria-label="Sign out" className="rounded-full border border-border bg-card p-2.5"><LogOut className="h-4 w-4" /></button>
+          </div>
+        }
+      />
       <div className="space-y-4 px-5">
         <div className="rounded-xl bg-warm p-5 text-primary-foreground shadow-soft">
           <p className="text-sm font-semibold opacity-90">Live capacity</p>

@@ -9,6 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AdoptRouteImport } from './routes/adopt'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated/applications'
 import { Route as AuthenticatedBoardRouteImport } from './routes/_authenticated/board'
@@ -17,53 +20,71 @@ import { Route as AuthenticatedCatsIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCatsIdRouteImport } from './routes/_authenticated/cats.$id'
 import { Route as AuthenticatedCatsNewRouteImport } from './routes/_authenticated/cats.new'
 
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
-  id: '/_authenticated/',
-  path: '/',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdoptRoute = AdoptRouteImport.update({
+  id: '/adopt',
+  path: '/adopt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedApplicationsRoute =
   AuthenticatedApplicationsRouteImport.update({
-    id: '/_authenticated/applications',
+    id: '/applications',
     path: '/applications',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedBoardRoute = AuthenticatedBoardRouteImport.update({
-  id: '/_authenticated/board',
+  id: '/board',
   path: '/board',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
-  id: '/_authenticated/tasks',
+  id: '/tasks',
   path: '/tasks',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCatsIndexRoute = AuthenticatedCatsIndexRouteImport.update({
-  id: '/_authenticated/cats/',
+  id: '/cats/',
   path: '/cats/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCatsIdRoute = AuthenticatedCatsIdRouteImport.update({
-  id: '/_authenticated/cats/$id',
+  id: '/cats/$id',
   path: '/cats/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCatsNewRoute = AuthenticatedCatsNewRouteImport.update({
-  id: '/_authenticated/cats/new',
+  id: '/cats/new',
   path: '/cats/new',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedIndexRoute
+  '/adopt': typeof AdoptRoute
+  '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/board': typeof AuthenticatedBoardRoute
   '/tasks': typeof AuthenticatedTasksRoute
-  '/': typeof AuthenticatedIndexRoute
   '/cats/$id': typeof AuthenticatedCatsIdRoute
   '/cats/new': typeof AuthenticatedCatsNewRoute
   '/cats/': typeof AuthenticatedCatsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/adopt': typeof AdoptRoute
+  '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/board': typeof AuthenticatedBoardRoute
   '/tasks': typeof AuthenticatedTasksRoute
@@ -74,6 +95,9 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/adopt': typeof AdoptRoute
+  '/auth': typeof AuthRoute
   '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/board': typeof AuthenticatedBoardRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
@@ -85,15 +109,19 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
+    | '/adopt'
+    | '/auth'
     | '/applications'
     | '/board'
     | '/tasks'
-    | '/'
     | '/cats/$id'
     | '/cats/new'
     | '/cats/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/adopt'
+    | '/auth'
     | '/applications'
     | '/board'
     | '/tasks'
@@ -103,6 +131,9 @@ export interface FileRouteTypes {
     | '/cats'
   id:
     | '__root__'
+    | '/_authenticated'
+    | '/adopt'
+    | '/auth'
     | '/_authenticated/applications'
     | '/_authenticated/board'
     | '/_authenticated/tasks'
@@ -113,6 +144,87 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AdoptRoute: typeof AdoptRoute
+  AuthRoute: typeof AuthRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/adopt': {
+      id: '/adopt'
+      path: '/adopt'
+      fullPath: '/adopt'
+      preLoaderRoute: typeof AdoptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/applications': {
+      id: '/_authenticated/applications'
+      path: '/applications'
+      fullPath: '/applications'
+      preLoaderRoute: typeof AuthenticatedApplicationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/board': {
+      id: '/_authenticated/board'
+      path: '/board'
+      fullPath: '/board'
+      preLoaderRoute: typeof AuthenticatedBoardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tasks': {
+      id: '/_authenticated/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AuthenticatedTasksRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/cats/': {
+      id: '/_authenticated/cats/'
+      path: '/cats'
+      fullPath: '/cats/'
+      preLoaderRoute: typeof AuthenticatedCatsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/cats/$id': {
+      id: '/_authenticated/cats/$id'
+      path: '/cats/$id'
+      fullPath: '/cats/$id'
+      preLoaderRoute: typeof AuthenticatedCatsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/cats/new': {
+      id: '/_authenticated/cats/new'
+      path: '/cats/new'
+      fullPath: '/cats/new'
+      preLoaderRoute: typeof AuthenticatedCatsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+  }
+}
+
+interface AuthenticatedRouteRouteChildren {
   AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
   AuthenticatedBoardRoute: typeof AuthenticatedBoardRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
@@ -122,61 +234,7 @@ export interface RootRouteChildren {
   AuthenticatedCatsIndexRoute: typeof AuthenticatedCatsIndexRoute
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/_authenticated/': {
-      id: '/_authenticated/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/applications': {
-      id: '/_authenticated/applications'
-      path: '/applications'
-      fullPath: '/applications'
-      preLoaderRoute: typeof AuthenticatedApplicationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/board': {
-      id: '/_authenticated/board'
-      path: '/board'
-      fullPath: '/board'
-      preLoaderRoute: typeof AuthenticatedBoardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/tasks': {
-      id: '/_authenticated/tasks'
-      path: '/tasks'
-      fullPath: '/tasks'
-      preLoaderRoute: typeof AuthenticatedTasksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/cats/': {
-      id: '/_authenticated/cats/'
-      path: '/cats'
-      fullPath: '/cats/'
-      preLoaderRoute: typeof AuthenticatedCatsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/cats/$id': {
-      id: '/_authenticated/cats/$id'
-      path: '/cats/$id'
-      fullPath: '/cats/$id'
-      preLoaderRoute: typeof AuthenticatedCatsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/cats/new': {
-      id: '/_authenticated/cats/new'
-      path: '/cats/new'
-      fullPath: '/cats/new'
-      preLoaderRoute: typeof AuthenticatedCatsNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-  }
-}
-
-const rootRouteChildren: RootRouteChildren = {
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
   AuthenticatedBoardRoute: AuthenticatedBoardRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
@@ -184,6 +242,15 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedCatsIdRoute: AuthenticatedCatsIdRoute,
   AuthenticatedCatsNewRoute: AuthenticatedCatsNewRoute,
   AuthenticatedCatsIndexRoute: AuthenticatedCatsIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AdoptRoute: AdoptRoute,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
