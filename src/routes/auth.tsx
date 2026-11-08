@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): { denied?: boolean } => (s.denied ? { denied: true } : {}),
+  validateSearch: (s: Record<string, unknown>): { denied?: boolean } => (s["denied"] ? { denied: true } : {}),
   head: () => ({
     meta: [
       { title: "Staff sign-in — Whisker Haven" },
