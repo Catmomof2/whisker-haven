@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Staff screens live under src/routes/_authenticated (gate checks the staff role); staff server functions use requireStaff from src/lib/staff.ts — public pages (/adopt, /auth) only call narrow public functions so applicant data never leaks.
