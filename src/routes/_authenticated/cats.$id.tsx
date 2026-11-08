@@ -9,7 +9,7 @@ import { catsQuery, STAGES, fileToDataUrl, type Cat } from "@/lib/shelter";
 import { StageBadge, CatAvatar } from "@/components/AppShell";
 import { generateBio } from "@/lib/shelter.functions";
 
-export const Route = createFileRoute("/cats/$id")({
+export const Route = createFileRoute("/_authenticated/cats/$id")({
   head: () => ({
     meta: [
       { title: "Cat Profile — Whisker Haven Shelter" },

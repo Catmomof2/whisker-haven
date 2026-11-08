@@ -1,13 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateResponse } from "@lovable.dev/ai-gateway";
+import { requireStaff } from "@/lib/staff";
 
 const bioInput = z.object({
   name: z.string().max(100),
   traits: z.string().max(3000),
 });
 
-export const generateBio = createServerFn({ method: "POST" })
+export const generateBio = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => bioInput.parse(d))
   .handler(async ({ data }) => {
     const res = await generateResponse({
@@ -92,3 +93,18 @@ export const submitApplication = createServerFn({ method: "POST" })
     }
     return { id: row.id, emailStatus };
   });
+
+// Public: only adoptable cats, only safe display fields.
+export const listAdoptableCats = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("cats")
+    .select("id, name, photo_url, breed, color, age_years, sex, temperament, bio")
+    .eq("stage", "available")
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error(error);
+    throw new Error("Could not load cats");
+  }
+  return data ?? [];
+});

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { createCat } from "@/lib/data.functions";
 import { fileToDataUrl } from "@/lib/shelter";
 
-export const Route = createFileRoute("/cats/new")({
+export const Route = createFileRoute("/_authenticated/cats/new")({
   head: () => ({
     meta: [
       { title: "New Intake — Whisker Haven Shelter" },

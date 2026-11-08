@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireStaff } from "@/lib/staff";
 import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 // All database access goes through these narrow, validated server functions.
@@ -38,13 +39,13 @@ const catFields = z.object({
   caption: s(1000).nullable().optional(),
 });
 
-export const listCats = createServerFn({ method: "GET" }).handler(async () => {
+export const listCats = createServerFn({ method: "GET" }).middleware([requireStaff]).handler(async () => {
   const { data, error } = await (await admin()).from("cats").select("*").order("created_at", { ascending: false });
   fail(error);
   return data ?? [];
 });
 
-export const createCat = createServerFn({ method: "POST" })
+export const createCat = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => catFields.parse(d))
   .handler(async ({ data }) => {
     const { data: row, error } = await (await admin()).from("cats").insert({ ...data, stage: "intake" } as TablesInsert<"cats">).select("id").single();
@@ -52,7 +53,7 @@ export const createCat = createServerFn({ method: "POST" })
     return { id: row!.id };
   });
 
-export const updateCat = createServerFn({ method: "POST" })
+export const updateCat = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ id: z.string().uuid(), patch: catFields.partial() }).parse(d))
   .handler(async ({ data }) => {
     const { error } = await (await admin()).from("cats").update(data.patch as TablesUpdate<"cats">).eq("id", data.id);
@@ -60,7 +61,7 @@ export const updateCat = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const listVetLogs = createServerFn({ method: "GET" })
+export const listVetLogs = createServerFn({ method: "GET" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ cat_id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     const { data: rows, error } = await (await admin()).from("vet_logs").select("*").eq("cat_id", data.cat_id).order("visit_date", { ascending: false });
@@ -68,7 +69,7 @@ export const listVetLogs = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
-export const addVetLog = createServerFn({ method: "POST" })
+export const addVetLog = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ cat_id: z.string().uuid(), visit_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), note: s(1000).trim().min(1) }).parse(d))
   .handler(async ({ data }) => {
     const { error } = await (await admin()).from("vet_logs").insert(data);
@@ -76,13 +77,13 @@ export const addVetLog = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const listTasks = createServerFn({ method: "GET" }).handler(async () => {
+export const listTasks = createServerFn({ method: "GET" }).middleware([requireStaff]).handler(async () => {
   const { data, error } = await (await admin()).from("tasks").select("*").order("created_at");
   fail(error);
   return data ?? [];
 });
 
-export const addTask = createServerFn({ method: "POST" })
+export const addTask = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ title: s(200).trim().min(1), category: z.enum(["feeding", "medication", "cleaning"]), time_slot: s(30).nullable() }).parse(d))
   .handler(async ({ data }) => {
     const { error } = await (await admin()).from("tasks").insert(data);
@@ -90,7 +91,7 @@ export const addTask = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const setTaskDone = createServerFn({ method: "POST" })
+export const setTaskDone = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ id: z.string().uuid(), done: z.boolean() }).parse(d))
   .handler(async ({ data }) => {
     const { error } = await (await admin()).from("tasks").update({ done: data.done }).eq("id", data.id);
@@ -98,7 +99,7 @@ export const setTaskDone = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const deleteTask = createServerFn({ method: "POST" })
+export const deleteTask = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     const { error } = await (await admin()).from("tasks").delete().eq("id", data.id);
@@ -106,19 +107,19 @@ export const deleteTask = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const resetTasks = createServerFn({ method: "POST" }).handler(async () => {
+export const resetTasks = createServerFn({ method: "POST" }).middleware([requireStaff]).handler(async () => {
   const { error } = await (await admin()).from("tasks").update({ done: false }).eq("done", true);
   fail(error);
   return { ok: true };
 });
 
-export const listApplications = createServerFn({ method: "GET" }).handler(async () => {
+export const listApplications = createServerFn({ method: "GET" }).middleware([requireStaff]).handler(async () => {
   const { data, error } = await (await admin()).from("applications").select("*").order("created_at", { ascending: false });
   fail(error);
   return data ?? [];
 });
 
-export const setApplicationStatus = createServerFn({ method: "POST" })
+export const setApplicationStatus = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ id: z.string().uuid(), status: z.enum(["pending", "approved", "declined"]) }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
@@ -131,13 +132,13 @@ export const setApplicationStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const getSettings = createServerFn({ method: "GET" }).handler(async () => {
+export const getSettings = createServerFn({ method: "GET" }).middleware([requireStaff]).handler(async () => {
   const { data, error } = await (await admin()).from("settings").select("*").eq("id", 1).single();
   fail(error);
   return data!;
 });
 
-export const saveSettings = createServerFn({ method: "POST" })
+export const saveSettings = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ staff_email: z.string().trim().email().max(200).nullable(), capacity: z.number().int().min(1).max(10000) }).parse(d))
   .handler(async ({ data }) => {
     const { error } = await (await admin()).from("settings").update(data).eq("id", 1);
