@@ -2,7 +2,7 @@
 
 # North star
 
-Rescued cats leave the shelter for loving permanent homes.
+Rescued cats at many shelters leave for loving permanent homes.
 
 ## Metric
 
