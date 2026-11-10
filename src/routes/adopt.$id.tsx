@@ -73,6 +73,11 @@ function AdoptDetail() {
             <p className="text-sm text-muted-foreground">
               {[cat.breed, cat.color, ageLabel(cat.age_years), cat.sex].filter(Boolean).join(" · ")}
             </p>
+            {cat.tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {cat.tags.map((t) => <span key={t} className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold">{t}</span>)}
+              </div>
+            )}
           </div>
         </div>
 

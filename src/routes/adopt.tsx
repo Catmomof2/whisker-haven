@@ -53,11 +53,15 @@ function AdoptPage() {
   const [applyFor, setApplyFor] = useState<PublicCat | null>(null);
   const [q, setQ] = useState("");
   const [age, setAge] = useState<AgeGroup>("all");
+  const [tag, setTag] = useState("all");
+
+  const tags = [...new Set(cats.flatMap((c) => c.tags))].sort();
 
   const list = cats.filter((c) => {
     if (age !== "all" && ageGroupOf(c.age_years) !== age) return false;
+    if (tag !== "all" && !c.tags.includes(tag)) return false;
     if (q.trim()) {
-      const hay = `${c.name} ${c.breed ?? ""} ${c.color ?? ""} ${c.temperament ?? ""}`.toLowerCase();
+      const hay = `${c.name} ${c.breed ?? ""} ${c.color ?? ""} ${c.temperament ?? ""} ${c.tags.join(" ")}`.toLowerCase();
       if (!hay.includes(q.trim().toLowerCase())) return false;
     }
     return true;
@@ -86,6 +90,16 @@ function AdoptPage() {
                 </button>
               ))}
             </div>
+            {tags.length > 0 && (
+              <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
+                <button onClick={() => setTag("all")} className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold ${tag === "all" ? "bg-foreground text-background" : "bg-secondary text-secondary-foreground"}`}>All traits</button>
+                {tags.map((t) => (
+                  <button key={t} onClick={() => setTag(t)} className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold ${tag === t ? "bg-foreground text-background" : "bg-secondary text-secondary-foreground"}`}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            )}
             {list.length === 0 && (
               <p className="py-6 text-center text-sm text-muted-foreground">No cats match those filters. Try clearing a filter or two.</p>
             )}
@@ -103,6 +117,11 @@ function AdoptPage() {
               <p className="text-xs font-semibold text-muted-foreground">
                 {[c.age_years != null && `${c.age_years} yrs`, c.sex, c.breed, c.color].filter(Boolean).join(" · ")}
               </p>
+              {c.tags.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {c.tags.map((t) => <span key={t} className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold">{t}</span>)}
+                </div>
+              )}
               {c.bio ? <p className="mt-3 whitespace-pre-line text-sm leading-relaxed">{c.bio}</p> : c.temperament && <p className="mt-3 text-sm">{c.temperament}</p>}
               <Link to="/adopt/$id" params={{ id: c.id }} search={{ rescue }} className="mt-3 inline-block text-sm font-semibold text-primary">
                 See {c.name}&apos;s full profile →
