@@ -406,6 +406,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_shelter_invite: { Args: { _token: string }; Returns: undefined }
       create_my_shelter: { Args: { _name: string }; Returns: string }
       has_role: {
         Args: {
@@ -418,6 +419,19 @@ export type Database = {
       my_shelter_id: { Args: never; Returns: string }
       public_adoption_page: { Args: { _slug: string }; Returns: Json }
       remove_shelter_staff: { Args: { _member: string }; Returns: undefined }
+      submit_public_application: {
+        Args: {
+          _cat: string
+          _email: string
+          _home: string
+          _message: string
+          _name: string
+          _pets: string
+          _phone: string
+          _slug: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "staff"
