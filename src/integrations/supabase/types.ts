@@ -25,6 +25,7 @@ export type Database = {
           message: string | null
           other_pets: string | null
           phone: string | null
+          shelter_id: string
           status: string
         }
         Insert: {
@@ -37,6 +38,7 @@ export type Database = {
           message?: string | null
           other_pets?: string | null
           phone?: string | null
+          shelter_id: string
           status?: string
         }
         Update: {
@@ -49,14 +51,29 @@ export type Database = {
           message?: string | null
           other_pets?: string | null
           phone?: string | null
+          shelter_id?: string
           status?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "application_same_shelter"
+            columns: ["cat_id", "shelter_id"]
+            isOneToOne: false
+            referencedRelation: "cats"
+            referencedColumns: ["id", "shelter_id"]
+          },
           {
             foreignKeyName: "applications_cat_id_fkey"
             columns: ["cat_id"]
             isOneToOne: false
             referencedRelation: "cats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
             referencedColumns: ["id"]
           },
         ]
@@ -80,6 +97,7 @@ export type Database = {
           photo_url: string | null
           priority: boolean
           sex: string | null
+          shelter_id: string
           spay_neuter: boolean
           stage: string
           tags: string[]
@@ -104,6 +122,7 @@ export type Database = {
           photo_url?: string | null
           priority?: boolean
           sex?: string | null
+          shelter_id: string
           spay_neuter?: boolean
           stage?: string
           tags?: string[]
@@ -128,13 +147,22 @@ export type Database = {
           photo_url?: string | null
           priority?: boolean
           sex?: string | null
+          shelter_id?: string
           spay_neuter?: boolean
           stage?: string
           tags?: string[]
           temperament?: string | null
           vaccinations?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cats_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       settings: {
         Row: {
@@ -154,12 +182,127 @@ export type Database = {
         }
         Relationships: []
       }
+      shelter_invites: {
+        Row: {
+          email: string
+          expires_at: string
+          id: string
+          shelter_id: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          email: string
+          expires_at?: string
+          id?: string
+          shelter_id: string
+          token?: string
+          used_at?: string | null
+        }
+        Update: {
+          email?: string
+          expires_at?: string
+          id?: string
+          shelter_id?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelter_invites_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shelter_members: {
+        Row: {
+          email: string
+          id: string
+          role: string
+          shelter_id: string
+          user_id: string
+        }
+        Insert: {
+          email?: string
+          id?: string
+          role?: string
+          shelter_id: string
+          user_id: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          role?: string
+          shelter_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelter_members_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shelter_settings: {
+        Row: {
+          capacity: number
+          shelter_id: string
+          staff_email: string | null
+        }
+        Insert: {
+          capacity?: number
+          shelter_id: string
+          staff_email?: string | null
+        }
+        Update: {
+          capacity?: number
+          shelter_id?: string
+          staff_email?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelter_settings_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: true
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shelters: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           category: string
           created_at: string
           done: boolean
           id: string
+          shelter_id: string
           time_slot: string | null
           title: string
         }
@@ -168,6 +311,7 @@ export type Database = {
           created_at?: string
           done?: boolean
           id?: string
+          shelter_id: string
           time_slot?: string | null
           title: string
         }
@@ -176,10 +320,19 @@ export type Database = {
           created_at?: string
           done?: boolean
           id?: string
+          shelter_id?: string
           time_slot?: string | null
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -205,6 +358,7 @@ export type Database = {
           created_at: string
           id: string
           note: string
+          shelter_id: string
           visit_date: string
         }
         Insert: {
@@ -212,6 +366,7 @@ export type Database = {
           created_at?: string
           id?: string
           note: string
+          shelter_id: string
           visit_date?: string
         }
         Update: {
@@ -219,6 +374,7 @@ export type Database = {
           created_at?: string
           id?: string
           note?: string
+          shelter_id?: string
           visit_date?: string
         }
         Relationships: [
@@ -229,6 +385,20 @@ export type Database = {
             referencedRelation: "cats"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "vet_logs_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vet_same_shelter"
+            columns: ["cat_id", "shelter_id"]
+            isOneToOne: false
+            referencedRelation: "cats"
+            referencedColumns: ["id", "shelter_id"]
+          },
         ]
       }
     }
@@ -236,6 +406,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_my_shelter: { Args: { _name: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -243,6 +414,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_shelter_owner: { Args: { _shelter: string }; Returns: boolean }
+      my_shelter_id: { Args: never; Returns: string }
+      public_adoption_page: { Args: { _slug: string }; Returns: Json }
+      remove_shelter_staff: { Args: { _member: string }; Returns: undefined }
     }
     Enums: {
       app_role: "staff"
