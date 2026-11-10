@@ -10,3 +10,6 @@
 <!-- LOVABLE:END -->
 
 - Staff screens live under src/routes/_authenticated (gate checks the staff role); staff server functions use requireStaff from src/lib/staff.ts — public pages (/adopt, /auth) only call narrow public functions so applicant data never leaks.
+- Rescue access uses one protected shelter membership per account; requireStaff resolves it server-side and operational queries use the authenticated RLS client, preventing cross-rescue access.
+- Public adoption reads and submissions use narrow database functions through a publishable client; notifications alone use privileged access after resolving the destination rescue.
+- Signup creates a rescue or consumes an email-bound expiring invitation atomically; existing records remain assigned to the original rescue.

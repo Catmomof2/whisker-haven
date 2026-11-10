@@ -3,21 +3,24 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
+import { Button } from "@/components/ui/button";
 import { Heart, X } from "lucide-react";
 import { listAdoptableCats, submitApplication } from "@/lib/shelter.functions";
 import { CatAvatar } from "@/components/AppShell";
 
-const adoptQuery = { queryKey: ["adoptable"], queryFn: () => listAdoptableCats() };
-type PublicCat = Awaited<ReturnType<typeof listAdoptableCats>>[number];
+const adoptQuery = (slug: string) => ({ queryKey: ["adoptable", slug], queryFn: () => listAdoptableCats({ data: { slug } }) });
+type PublicCat = NonNullable<Awaited<ReturnType<typeof listAdoptableCats>>>["cats"][number];
 
 export const Route = createFileRoute("/adopt")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(adoptQuery),
-  head: () => ({
+  validateSearch: (s: Record<string, unknown>) => ({ rescue: typeof s["rescue"] === "string" ? s["rescue"] : "whisker-haven" }),
+  loaderDeps: ({ search }) => ({ slug: search.rescue }),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(adoptQuery(deps.slug)),
+  head: ({ loaderData }) => ({
     meta: [
-      { title: "Adopt a cat — Whisker Haven Rescue" },
-      { name: "description", content: "Meet the adult cats at Whisker Haven looking for a home, and apply to adopt online." },
-      { property: "og:title", content: "Adopt a cat — Whisker Haven Rescue" },
-      { property: "og:description", content: "Meet the adult cats at Whisker Haven looking for a home, and apply to adopt online." },
+      { title: `Adopt a cat — ${loaderData?.shelter.name ?? "Cat Rescue"}` },
+      { name: "description", content: `Meet available adult cats at ${loaderData?.shelter.name ?? "this rescue"} and apply to adopt.` },
+      { property: "og:title", content: `Adopt a cat — ${loaderData?.shelter.name ?? "Cat Rescue"}` },
+      { property: "og:description", content: `Meet available adult cats at ${loaderData?.shelter.name ?? "this rescue"} and apply to adopt.` },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -26,18 +29,21 @@ export const Route = createFileRoute("/adopt")({
 });
 
 function AdoptPage() {
-  const { data: cats } = useSuspenseQuery(adoptQuery);
+  const { rescue } = Route.useSearch();
+  const { data: page } = useSuspenseQuery(adoptQuery(rescue));
+  const cats = page?.cats ?? [];
   const [applyFor, setApplyFor] = useState<PublicCat | null>(null);
 
   return (
     <div className="mx-auto min-h-screen max-w-md bg-background pb-12">
       <header className="px-5 pb-4 pt-8">
-        <p className="text-xs font-bold uppercase tracking-wider text-primary">Whisker Haven Rescue</p>
-        <h1 className="mt-1 font-display text-3xl font-semibold leading-tight">Adult cats looking for home</h1>
+        <h1 className="font-display text-3xl font-semibold">{page?.shelter.name ?? "Rescue not found"}</h1>
+        <p className="mt-2 text-lg font-semibold">Adult cats looking for home</p>
         <p className="mt-2 text-sm text-muted-foreground">Grown-up cats with settled personalities. Find your match and apply in two minutes.</p>
       </header>
       <div className="space-y-4 px-5">
-        {cats.length === 0 && <p className="rounded-xl bg-card p-5 text-sm">No cats are available right now — check back soon!</p>}
+        {!page && <p>This rescue link is not available.</p>}
+        {page && cats.length === 0 && <p className="rounded-xl bg-card p-5 text-sm">No cats are available right now — check back soon!</p>}
         {cats.map((c) => (
           <article key={c.id} className="overflow-hidden rounded-xl border border-border bg-card shadow-soft">
             {c.photo_url ? (
@@ -51,20 +57,20 @@ function AdoptPage() {
                 {[c.age_years != null && `${c.age_years} yrs`, c.sex, c.breed, c.color].filter(Boolean).join(" · ")}
               </p>
               {c.bio ? <p className="mt-3 whitespace-pre-line text-sm leading-relaxed">{c.bio}</p> : c.temperament && <p className="mt-3 text-sm">{c.temperament}</p>}
-              <button onClick={() => setApplyFor(c)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-primary-foreground">
+              <Button onClick={() => setApplyFor(c)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-primary-foreground">
                 <Heart className="h-4 w-4" /> Apply to adopt {c.name}
-              </button>
+              </Button>
             </div>
           </article>
         ))}
       </div>
       <p className="mt-10 text-center text-xs text-muted-foreground"><Link to="/auth" search={{}} className="font-semibold">Staff sign-in</Link></p>
-      {applyFor && <ApplyForm cat={applyFor} onClose={() => setApplyFor(null)} />}
+      {applyFor && <ApplyForm slug={rescue} cat={applyFor} onClose={() => setApplyFor(null)} />}
     </div>
   );
 }
 
-function ApplyForm({ cat, onClose }: { cat: PublicCat; onClose: () => void }) {
+function ApplyForm({ slug, cat, onClose }: { slug: string; cat: PublicCat; onClose: () => void }) {
   const submit = useServerFn(submitApplication);
   const [f, setF] = useState({ applicant_name: "", email: "", phone: "", home_type: "", other_pets: "", message: "" });
   const [busy, setBusy] = useState(false);
@@ -76,7 +82,7 @@ function ApplyForm({ cat, onClose }: { cat: PublicCat; onClose: () => void }) {
     e.preventDefault();
     setBusy(true);
     try {
-      await submit({ data: { ...f, cat_id: cat.id } });
+      await submit({ data: { ...f, slug, cat_id: cat.id } });
       setDone(true);
     } catch {
       toast.error("Couldn't send your application. Please try again.");
@@ -90,12 +96,12 @@ function ApplyForm({ cat, onClose }: { cat: PublicCat; onClose: () => void }) {
       <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-card p-5" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h3 className="font-display text-xl font-semibold">Apply for {cat.name}</h3>
-          <button onClick={onClose} aria-label="Close"><X className="h-5 w-5" /></button>
+          <Button onClick={onClose} aria-label="Close"><X className="h-5 w-5" /></Button>
         </div>
         {done ? (
           <div className="space-y-4 text-sm">
             <p>Thank you! Our team has your application and will be in touch soon.</p>
-            <button onClick={onClose} className="w-full rounded-xl bg-primary py-3 font-bold text-primary-foreground">Done</button>
+            <Button onClick={onClose} className="w-full rounded-xl bg-primary py-3 font-bold text-primary-foreground">Done</Button>
           </div>
         ) : (
           <form onSubmit={send} className="space-y-3">
@@ -105,9 +111,9 @@ function ApplyForm({ cat, onClose }: { cat: PublicCat; onClose: () => void }) {
             <input className={input} placeholder="Home type (house, apartment…)" value={f.home_type} onChange={set("home_type")} />
             <input className={input} placeholder="Other pets at home" value={f.other_pets} onChange={set("other_pets")} />
             <textarea className={input} rows={3} placeholder={`Why ${cat.name}?`} value={f.message} onChange={set("message")} />
-            <button disabled={busy} className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-60">
+            <Button disabled={busy} className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-60">
               {busy ? "Sending…" : "Send application"}
-            </button>
+            </Button>
           </form>
         )}
       </div>

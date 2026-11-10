@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LogOut, Globe, Plus, Kanban, AlertTriangle, ChevronRight } from "lucide-react";
 import { PageHeader, StageBadge, CatAvatar } from "@/components/AppShell";
 import { catsQuery, tasksQuery, appsQuery, settingsQuery, STAGES } from "@/lib/shelter";
+import { getRescue } from "@/lib/rescue.functions";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/")({
 });
 
 function Dashboard() {
+  const { data: rescue } = useQuery({ queryKey: ["rescue"], queryFn: () => getRescue() });
   const { data: cats = [] } = useQuery(catsQuery);
   const { data: tasks = [] } = useQuery(tasksQuery);
   const { data: apps = [] } = useQuery(appsQuery);
@@ -41,15 +43,16 @@ function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Whisker Haven" subtitle="Good day! Here's the shelter today."
+      <PageHeader title={rescue?.name ?? "Your rescue"} subtitle="Good day! Here's the shelter today."
         action={
           <div className="flex gap-2">
-            <Link to="/adopt" aria-label="Public adoption page" className="rounded-full border border-border bg-card p-2.5"><Globe className="h-4 w-4" /></Link>
+            <Link to="/adopt" search={{ rescue: rescue?.slug ?? "" }} aria-label="Public adoption page" className="rounded-full border border-border bg-card p-2.5"><Globe className="h-4 w-4" /></Link>
             <button onClick={signOut} aria-label="Sign out" className="rounded-full border border-border bg-card p-2.5"><LogOut className="h-4 w-4" /></button>
           </div>
         }
       />
       <div className="space-y-4 px-5">
+        <Link to="/team" className="block text-sm font-semibold text-primary">Rescue team & adoption link →</Link>
         <div className="rounded-xl bg-warm p-5 text-primary-foreground shadow-soft">
           <p className="text-sm font-semibold opacity-90">Live capacity</p>
           <p className="mt-1 font-display text-4xl font-semibold">
