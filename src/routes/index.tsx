@@ -47,6 +47,9 @@ function LandingPage() {
             <Heart className="h-4 w-4" /> Meet the cats
           </Link>
         )}
+        <Link to="/signup" className="flex items-center justify-center rounded-xl border border-border bg-card py-3.5 text-sm font-bold text-primary shadow-soft">
+          Run a rescue? Register yours →
+        </Link>
       </div>
 
       {page && (
