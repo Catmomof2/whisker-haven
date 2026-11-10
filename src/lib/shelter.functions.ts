@@ -74,7 +74,7 @@ export const submitApplication = createServerFn({ method: "POST" }).inputValidat
 
 const publicPage = z.object({
   shelter: z.object({ id: z.string().uuid(), name: z.string(), slug: z.string() }),
-  cats: z.array(z.object({ id: z.string().uuid(), name: z.string(), photo_url: z.string().nullable(), breed: z.string().nullable(), color: z.string().nullable(), age_years: z.number().nullable(), sex: z.string().nullable(), temperament: z.string().nullable(), bio: z.string().nullable() })),
+  cats: z.array(z.object({ id: z.string().uuid(), name: z.string(), photo_url: z.string().nullable(), breed: z.string().nullable(), color: z.string().nullable(), age_years: z.number().nullable(), sex: z.string().nullable(), temperament: z.string().nullable(), bio: z.string().nullable(), tags: z.array(z.string()).optional().default([]) })),
 });
 export const listAdoptableCats = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string().min(1).max(100) }).parse(d))
