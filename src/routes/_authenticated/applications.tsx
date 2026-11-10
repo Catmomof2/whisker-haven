@@ -7,7 +7,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { setApplicationStatus, saveSettings as saveSettingsFn } from "@/lib/data.functions";
 import { appsQuery, catsQuery, settingsQuery } from "@/lib/shelter";
 import { PageHeader } from "@/components/AppShell";
-import { submitApplication } from "@/lib/shelter.functions";
+import { createStaffApplication } from "@/lib/data.functions";
 
 export const Route = createFileRoute("/_authenticated/applications")({
   head: () => ({
@@ -38,7 +38,7 @@ function Applications() {
   const [open, setOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [filter, setFilter] = useState("pending");
-  const submit = useServerFn(submitApplication);
+  const submit = useServerFn(createStaffApplication);
   const blank = { cat_id: "", applicant_name: "", email: "", phone: "", home_type: "", other_pets: "", message: "" };
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
@@ -54,8 +54,8 @@ function Applications() {
     e.preventDefault();
     setBusy(true);
     try {
-      const r = await submit({ data: { ...f, cat_id: f.cat_id || null } });
-      toast.success(r.emailStatus === "sent" ? "Application submitted · staff notified by email" : `Application submitted · email ${r.emailStatus}`);
+      await submit({ data: { ...f, cat_id: f.cat_id || null } });
+      toast.success("Application saved");
       setF(blank); setOpen(false);
       qc.invalidateQueries({ queryKey: ["applications"] });
     } catch (err) {
