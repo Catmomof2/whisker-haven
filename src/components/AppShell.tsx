@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Cat, ListChecks, FileHeart } from "lucide-react";
+import { LayoutDashboard, Cat, Heart, ListChecks, FileHeart } from "lucide-react";
 import type { ReactNode } from "react";
 
 const tabs = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cats", label: "Cats", icon: Cat },
+  { to: "/adopt", label: "Adopt", icon: Heart },
   { to: "/tasks", label: "Tasks", icon: ListChecks },
   { to: "/applications", label: "Applications", icon: FileHeart },
 ] as const;
@@ -15,7 +16,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="mx-auto min-h-screen max-w-md bg-background pb-24">
       {children}
       <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md border-t border-border bg-card/95 backdrop-blur">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
           {tabs.map((t) => {
             const active = t.to === "/" ? path === "/" : path.startsWith(t.to) || (t.to === "/cats" && path.startsWith("/board"));
             return (
