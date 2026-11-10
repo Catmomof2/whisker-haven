@@ -43,11 +43,11 @@ function AuthPage() {
           if (!existing) { const { error: joinError } = await supabase.rpc("accept_shelter_invite", { _token: invite }); if (joinError) throw joinError; }
         }
         qc.clear();
-        navigate({ to: "/" });
+        navigate({ to: "/dashboard" });
       } else {
         const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin, data: invite ? { invite_token: invite } : { shelter_name: shelterName.trim() } } });
         if (error) throw error;
-        if (data.session) { qc.clear(); navigate({ to: "/" }); }
+        if (data.session) { qc.clear(); navigate({ to: "/dashboard" }); }
         else setSent(true);
       }
     } catch (err) {
@@ -60,7 +60,7 @@ function AuthPage() {
   async function createWorkspace() {
     const { error } = await supabase.rpc("create_my_shelter", { _name: shelterName });
     if (error) { toast.error(error.message); return; }
-    qc.clear(); navigate({ to: "/" });
+    qc.clear(); navigate({ to: "/dashboard" });
   }
 
   async function signOut() {

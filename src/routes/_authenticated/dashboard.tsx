@@ -6,7 +6,7 @@ import { PageHeader, StageBadge, CatAvatar } from "@/components/AppShell";
 import { catsQuery, tasksQuery, appsQuery, settingsQuery, STAGES } from "@/lib/shelter";
 import { getRescue } from "@/lib/rescue.functions";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — Whisker Haven Shelter" },

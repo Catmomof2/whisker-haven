@@ -3,7 +3,7 @@ import { LayoutDashboard, Cat, Heart, ListChecks, FileHeart } from "lucide-react
 import type { ReactNode } from "react";
 
 const tabs = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cats", label: "Cats", icon: Cat },
   { to: "/adopt", label: "Adopt", icon: Heart },
   { to: "/tasks", label: "Tasks", icon: ListChecks },
@@ -18,7 +18,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md border-t border-border bg-card/95 backdrop-blur">
         <div className="grid grid-cols-5">
           {tabs.map((t) => {
-            const active = t.to === "/" ? path === "/" : path.startsWith(t.to) || (t.to === "/cats" && path.startsWith("/board"));
+            const active = path.startsWith(t.to) || (t.to === "/cats" && path.startsWith("/board"));
             return (
               <Link
                 key={t.to}
