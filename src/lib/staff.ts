@@ -1,11 +1,11 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-// Signed-in AND holding the staff role. Every staff-only server function uses this.
+// Membership is resolved from the verified user, never a client-selected shelter.
 export const requireStaff = createMiddleware({ type: "function" })
   .middleware([requireSupabaseAuth])
   .server(async ({ next, context }) => {
-    const { data, error } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "staff" });
-    if (error || !data) throw new Error("Forbidden: staff only");
-    return next();
+    const { data, error } = await context.supabase.from("shelter_members").select("shelter_id, role").eq("user_id", context.userId).single();
+    if (error || !data) throw new Error("Forbidden: rescue staff only");
+    return next({ context: { shelterId: data.shelter_id, shelterRole: data.role } });
   });
