@@ -92,9 +92,17 @@ function AuthPage() {
           <Button disabled={busy} className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-soft disabled:opacity-60">
             {busy ? "Please wait…" : mode === "in" ? "Sign in" : invite ? "Join rescue" : "Create rescue account"}
           </Button>
-          <Button type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="w-full text-sm font-semibold text-muted-foreground">
-            {mode === "in" ? "New here? Create an account" : "Have an account? Sign in"}
-          </Button>
+          {invite ? (
+            <Button type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="w-full text-sm font-semibold text-muted-foreground">
+              {mode === "in" ? "New here? Create an account" : "Have an account? Sign in"}
+            </Button>
+          ) : mode === "in" ? (
+            <Link to="/signup" className="block w-full text-center text-sm font-semibold text-muted-foreground">New here? Create an account</Link>
+          ) : (
+            <Button type="button" onClick={() => setMode("in")} className="w-full text-sm font-semibold text-muted-foreground">
+              Have an account? Sign in
+            </Button>
+          )}
         </form>
       )}
       <Link to="/adopt" search={{ rescue: "whisker-haven" }} className="mt-8 text-center text-sm font-bold text-primary">Looking to adopt? Meet our cats →</Link>
