@@ -43,6 +43,13 @@
       "when": 1794279474587,
       "tag": "0005_rescue_application_boundary",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794470597448,
+      "tag": "0006_apply_public_adoption_page_tags",
+      "breakpoints": true
     }
   ]
 }
