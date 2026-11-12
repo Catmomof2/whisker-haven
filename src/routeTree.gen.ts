@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdoptRouteImport } from './routes/adopt'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as RescuesRouteImport } from './routes/rescues'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated/applications'
 import { Route as AuthenticatedBoardRouteImport } from './routes/_authenticated/board'
@@ -41,6 +42,11 @@ const AdoptRoute = AdoptRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RescuesRoute = RescuesRouteImport.update({
+  id: '/rescues',
+  path: '/rescues',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adopt': typeof AdoptRouteWithChildren
   '/auth': typeof AuthRoute
+  '/rescues': typeof RescuesRoute
   '/signup': typeof SignupRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/board': typeof AuthenticatedBoardRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adopt': typeof AdoptRouteWithChildren
   '/auth': typeof AuthRoute
+  '/rescues': typeof RescuesRoute
   '/signup': typeof SignupRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/board': typeof AuthenticatedBoardRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/adopt': typeof AdoptRouteWithChildren
   '/auth': typeof AuthRoute
+  '/rescues': typeof RescuesRoute
   '/signup': typeof SignupRoute
   '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/board': typeof AuthenticatedBoardRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adopt'
     | '/auth'
+    | '/rescues'
     | '/signup'
     | '/applications'
     | '/board'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adopt'
     | '/auth'
+    | '/rescues'
     | '/signup'
     | '/applications'
     | '/board'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/adopt'
     | '/auth'
+    | '/rescues'
     | '/signup'
     | '/_authenticated/applications'
     | '/_authenticated/board'
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdoptRoute: typeof AdoptRouteWithChildren
   AuthRoute: typeof AuthRoute
+  RescuesRoute: typeof RescuesRoute
   SignupRoute: typeof SignupRoute
 }
 
@@ -227,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rescues': {
+      id: '/rescues'
+      path: '/rescues'
+      fullPath: '/rescues'
+      preLoaderRoute: typeof RescuesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -342,6 +362,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdoptRoute: AdoptRouteWithChildren,
   AuthRoute: AuthRoute,
+  RescuesRoute: RescuesRoute,
   SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
