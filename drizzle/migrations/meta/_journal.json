@@ -50,6 +50,13 @@
       "when": 1794470597448,
       "tag": "0006_apply_public_adoption_page_tags",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794471025450,
+      "tag": "0007_public_rescue_directory",
+      "breakpoints": true
     }
   ]
 }
