@@ -84,3 +84,17 @@ export const listAdoptableCats = createServerFn({ method: "GET" })
     if (error) throw new Error("Could not load rescue");
     return page ? publicPage.parse(page) : null;
   });
+
+const rescueDirectory = z.array(z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  slug: z.string(),
+  available_count: z.number().int().min(0),
+}));
+export const listRescues = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { publicClient } = await import("@/lib/public-client.server");
+    const { data: rescues, error } = await publicClient().rpc("public_rescue_directory");
+    if (error) throw new Error("Could not load rescues");
+    return rescueDirectory.parse(rescues ?? []);
+  });
