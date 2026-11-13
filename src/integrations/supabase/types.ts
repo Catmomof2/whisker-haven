@@ -418,7 +418,6 @@ export type Database = {
       is_shelter_owner: { Args: { _shelter: string }; Returns: boolean }
       my_shelter_id: { Args: never; Returns: string }
       public_adoption_page: { Args: { _slug: string }; Returns: Json }
-      public_rescue_directory: { Args: never; Returns: Json }
       remove_shelter_staff: { Args: { _member: string }; Returns: undefined }
       submit_public_application: {
         Args: {
