@@ -1,4 +1,5 @@
 # Multi-rescue work
+- [x] Restore the missing public rescue directory function and verify /rescues loads.
 - [x] Apply the existing public adoption tags SQL only; public RPC returns successfully.
 - [ ] Confirm tags on returned cats (blocked: Whisker Haven has no available cats).
 - [ ] Connect a rescue domain (waiting for a registered domain).
