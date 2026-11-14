@@ -49,8 +49,8 @@ function RescuesPage() {
         {rescues.map((r) => (
           <Link
             key={r.id}
-            to="/adopt"
-            search={{ rescue: r.slug }}
+            to="/rescues/$slug"
+            params={{ slug: r.slug }}
             className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-soft"
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-warm">
