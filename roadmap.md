@@ -1,6 +1,6 @@
 # Multi-rescue work
-- [ ] Add rescue-scoped stage/application totals and a saved monthly adoption goal with dated adoption tracking.
-- [ ] Finish confirmation return, resend confirmation, and email staff invitations; verify with the supplied real inbox.
+- [x] Add rescue-scoped stage/application totals and a saved monthly adoption goal with dated adoption tracking; goal persistence verified while signed in.
+- [ ] Finish real-inbox confirmation verification (confirmation page, resend, and staff email invitation implemented; supplied account created as staff, waiting for recipient to open email).
 - [x] Restore the missing public rescue directory function and verify /rescues loads.
 - [x] Apply the existing public adoption tags SQL only; public RPC returns successfully.
 - [ ] Confirm tags on returned cats (blocked: Whisker Haven has no available cats).
