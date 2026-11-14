@@ -13,3 +13,4 @@
 - Rescue access uses one protected shelter membership per account; requireStaff resolves it server-side and operational queries use the authenticated RLS client, preventing cross-rescue access.
 - Public adoption reads and submissions use narrow database functions through a publishable client; notifications alone use privileged access after resolving the destination rescue.
 - Signup creates a rescue or consumes an email-bound expiring invitation atomically; existing records remain assigned to the original rescue.
+- Signup and staff invitation emails return to the public confirmation page on the published app; staff invitations use managed auth email with invitation metadata so recipients choose their own password without a custom sender domain.

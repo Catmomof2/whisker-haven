@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { confirmationUrl } from "@/lib/auth-flow";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): { denied?: boolean; invite?: string } => ({ ...(s["denied"] ? { denied: true } : {}), ...(typeof s["invite"] === "string" ? { invite: s["invite"] } : {}) }),
@@ -45,7 +46,7 @@ function AuthPage() {
         qc.clear();
         navigate({ to: "/dashboard" });
       } else {
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin, data: invite ? { invite_token: invite } : { shelter_name: shelterName.trim() } } });
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: confirmationUrl(invite), data: invite ? { invite_token: invite } : { shelter_name: shelterName.trim() } } });
         if (error) throw error;
         if (data.session) { qc.clear(); navigate({ to: "/dashboard" }); }
         else setSent(true);
@@ -70,6 +71,12 @@ function AuthPage() {
   }
 
   const input = "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm";
+  async function resend() {
+    setBusy(true);
+    const { error } = await supabase.auth.resend({ type: "signup", email, options: { emailRedirectTo: confirmationUrl(invite) } });
+    if (error) toast.error(error.message); else toast.success("Confirmation email sent");
+    setBusy(false);
+  }
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center bg-background px-6">
       <h1 className="font-display text-3xl font-semibold">Rescue staff</h1>
@@ -83,7 +90,7 @@ function AuthPage() {
         </div>
       )}
       {sent ? (
-        <p className="mt-6 rounded-xl bg-card p-4 text-sm">Check your email to confirm your account, then sign in.</p>
+        <div className="mt-6 space-y-3 rounded-xl bg-card p-4 text-sm"><p>Check your email to confirm your account, then sign in.</p><Button variant="outline" disabled={busy} onClick={resend}>Resend confirmation</Button></div>
       ) : (
         <form onSubmit={submit} className="mt-6 space-y-3">
           {mode === "up" && !invite && <input className={input} required maxLength={100} aria-label="Rescue name" placeholder="Rescue name" value={shelterName} onChange={(e) => setShelterName(e.target.value)} />}
@@ -92,6 +99,7 @@ function AuthPage() {
           <Button disabled={busy} className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-soft disabled:opacity-60">
             {busy ? "Please wait…" : mode === "in" ? "Sign in" : invite ? "Join rescue" : "Create rescue account"}
           </Button>
+          {mode === "in" && <Button type="button" variant="outline" disabled={busy || !email} onClick={resend} className="w-full">Resend confirmation email</Button>}
           {invite ? (
             <Button type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="w-full text-sm font-semibold text-muted-foreground">
               {mode === "in" ? "New here? Create an account" : "Have an account? Sign in"}
