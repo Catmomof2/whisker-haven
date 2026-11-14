@@ -278,6 +278,12 @@ function RescueDashboard() {
       >
                   Applicant outreach →
         </Link>
+        <Link
+          to="/rescue/admin"
+          className="block rounded-xl border border-border bg-card p-4 text-sm font-semibold text-primary"
+        >
+          Rescue admin →
+        </Link>
       </div>
     </div>
   );
