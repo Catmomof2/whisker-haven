@@ -80,6 +80,10 @@ function RescuesPage() {
         <Link to="/auth" search={{}} className="font-semibold">
           Staff sign-in
         </Link>
+        {" · "}
+        <Link to="/rescue" className="font-semibold">
+          Staff rescue dashboard
+        </Link>
       </p>
     </div>
   );
