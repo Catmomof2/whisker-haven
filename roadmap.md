@@ -1,4 +1,5 @@
 # Multi-rescue work
+- [ ] Add rescue-scoped stage/application totals and a saved monthly adoption goal with dated adoption tracking.
 - [ ] Finish confirmation return, resend confirmation, and email staff invitations; verify with the supplied real inbox.
 - [x] Restore the missing public rescue directory function and verify /rescues loads.
 - [x] Apply the existing public adoption tags SQL only; public RPC returns successfully.

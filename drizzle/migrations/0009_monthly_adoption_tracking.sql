@@ -1,0 +1,5 @@
+ALTER TABLE public.cats ADD COLUMN adopted_at timestamptz;
+COMMENT ON COLUMN public.cats.adopted_at IS 'Most recent transition into adopted; legacy adopted cats with unknown date remain null.';
+ALTER TABLE public.shelter_settings ADD COLUMN monthly_adoption_goal integer NOT NULL DEFAULT 0 CHECK (monthly_adoption_goal >= 0 AND monthly_adoption_goal <= 10000);
+CREATE FUNCTION public.track_cat_adoption() RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$ BEGIN IF NEW.stage = 'adopted' AND (TG_OP = 'INSERT' OR OLD.stage IS DISTINCT FROM 'adopted') THEN NEW.adopted_at := now(); ELSIF NEW.stage IS DISTINCT FROM 'adopted' THEN NEW.adopted_at := NULL; ELSE NEW.adopted_at := OLD.adopted_at; END IF; RETURN NEW; END $$;
+CREATE TRIGGER track_cat_adoption BEFORE INSERT OR UPDATE ON public.cats FOR EACH ROW EXECUTE FUNCTION public.track_cat_adoption();

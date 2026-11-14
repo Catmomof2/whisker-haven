@@ -21,7 +21,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AdoptIdRouteImport } from './routes/adopt.$id'
-import { Route as AuthConfirmRouteImport } from './routes/auth.confirm'
+import { Route as AuthConfirmRouteImport } from './routes/auth_.confirm'
 import { Route as AuthenticatedCatsIndexRouteImport } from './routes/_authenticated/cats.index'
 import { Route as AuthenticatedCatsIdRouteImport } from './routes/_authenticated/cats.$id'
 import { Route as AuthenticatedCatsNewRouteImport } from './routes/_authenticated/cats.new'
@@ -87,9 +87,9 @@ const AdoptIdRoute = AdoptIdRouteImport.update({
   getParentRoute: () => AdoptRoute,
 } as any)
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
-  id: '/confirm',
-  path: '/confirm',
-  getParentRoute: () => AuthRoute,
+  id: '/auth_/confirm',
+  path: '/auth/confirm',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedCatsIndexRoute = AuthenticatedCatsIndexRouteImport.update({
   id: '/cats/',
@@ -110,7 +110,7 @@ const AuthenticatedCatsNewRoute = AuthenticatedCatsNewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adopt': typeof AdoptRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
+  '/auth': typeof AuthRoute
   '/rescues': typeof RescuesRoute
   '/signup': typeof SignupRoute
   '/applications': typeof AuthenticatedApplicationsRoute
@@ -127,7 +127,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adopt': typeof AdoptRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
+  '/auth': typeof AuthRoute
   '/rescues': typeof RescuesRoute
   '/signup': typeof SignupRoute
   '/applications': typeof AuthenticatedApplicationsRoute
@@ -146,7 +146,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/adopt': typeof AdoptRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
+  '/auth': typeof AuthRoute
   '/rescues': typeof RescuesRoute
   '/signup': typeof SignupRoute
   '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
@@ -155,7 +155,7 @@ export interface FileRoutesById {
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/adopt/$id': typeof AdoptIdRoute
-  '/auth/confirm': typeof AuthConfirmRoute
+  '/auth_/confirm': typeof AuthConfirmRoute
   '/_authenticated/cats/$id': typeof AuthenticatedCatsIdRoute
   '/_authenticated/cats/new': typeof AuthenticatedCatsNewRoute
   '/_authenticated/cats/': typeof AuthenticatedCatsIndexRoute
@@ -209,7 +209,7 @@ export interface FileRouteTypes {
     | '/_authenticated/tasks'
     | '/_authenticated/team'
     | '/adopt/$id'
-    | '/auth/confirm'
+    | '/auth_/confirm'
     | '/_authenticated/cats/$id'
     | '/_authenticated/cats/new'
     | '/_authenticated/cats/'
@@ -219,9 +219,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdoptRoute: typeof AdoptRouteWithChildren
-  AuthRoute: typeof AuthRouteWithChildren
+  AuthRoute: typeof AuthRoute
   RescuesRoute: typeof RescuesRoute
   SignupRoute: typeof SignupRoute
+  AuthConfirmRoute: typeof AuthConfirmRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -310,12 +311,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdoptIdRouteImport
       parentRoute: typeof AdoptRoute
     }
-    '/auth/confirm': {
-      id: '/auth/confirm'
-      path: '/confirm'
+    '/auth_/confirm': {
+      id: '/auth_/confirm'
+      path: '/auth/confirm'
       fullPath: '/auth/confirm'
       preLoaderRoute: typeof AuthConfirmRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/cats/': {
       id: '/_authenticated/cats/'
@@ -376,23 +377,14 @@ const AdoptRouteChildren: AdoptRouteChildren = {
 
 const AdoptRouteWithChildren = AdoptRoute._addFileChildren(AdoptRouteChildren)
 
-interface AuthRouteChildren {
-  AuthConfirmRoute: typeof AuthConfirmRoute
-}
-
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthConfirmRoute: AuthConfirmRoute,
-}
-
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdoptRoute: AdoptRouteWithChildren,
-  AuthRoute: AuthRouteWithChildren,
+  AuthRoute: AuthRoute,
   RescuesRoute: RescuesRoute,
   SignupRoute: SignupRoute,
+  AuthConfirmRoute: AuthConfirmRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

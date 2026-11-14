@@ -64,6 +64,13 @@
       "when": 1794552033120,
       "tag": "0008_restore_public_rescue_directory",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794643292426,
+      "tag": "0009_monthly_adoption_tracking",
+      "breakpoints": true
     }
   ]
 }
