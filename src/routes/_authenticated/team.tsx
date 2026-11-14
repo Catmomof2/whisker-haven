@@ -27,7 +27,12 @@ function Team() {
   async function copy(value: string) { try { await navigator.clipboard.writeText(value); toast.success("Link copied"); } catch { toast.error("Please copy the link below"); } }
   async function invite(e: React.FormEvent) {
     e.preventDefault(); setBusy(true);
-    try { const result = await inviteStaff({ data: { email } }); setLink(`${window.location.origin}/auth?invite=${result.token}`); }
+    try {
+      const result = await inviteStaff({ data: { email } });
+      setLink(`https://purrposeful-shelter-hub.lovable.app/auth?invite=${result.token}`);
+      if (result.emailSent) toast.success("Confirmation invitation sent");
+      else toast.error(`Email wasn't sent: ${result.emailError ?? "Please share the invitation link instead."}`);
+    }
     catch { toast.error("Couldn't create invitation"); } finally { setBusy(false); }
   }
   async function remove(id: string) {
@@ -54,7 +59,7 @@ function Team() {
         <h2 className="font-semibold">Invite staff</h2>
         <form onSubmit={invite} className="space-y-3">
           <label className="block text-sm">Staff email<input aria-label="Staff email" required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full rounded-xl border border-border bg-card px-4 py-3" /></label>
-          <Button disabled={busy} type="submit" className="w-full">{busy ? "Creating…" : "Create invitation"}</Button>
+          <Button disabled={busy} type="submit" className="w-full">{busy ? "Sending…" : "Send invitation"}</Button>
         </form>
         {link && <div className="space-y-2"><p className="text-sm text-muted-foreground">Send this link to {email}. It expires in seven days.</p><input aria-label="Invitation link" readOnly value={link} className="w-full rounded-xl border border-border bg-card p-3 text-xs" /><Button variant="outline" onClick={() => copy(link)}><Copy /> Copy invitation</Button></div>}
       </section>}

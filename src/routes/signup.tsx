@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { confirmationUrl } from "@/lib/auth-flow";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -36,7 +37,7 @@ function SignupPage() {
         email,
         password,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: confirmationUrl(),
           data: { shelter_name: shelterName.trim() },
         },
       });
@@ -55,6 +56,12 @@ function SignupPage() {
   }
 
   const input = "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm";
+  async function resend() {
+    setBusy(true);
+    const { error } = await supabase.auth.resend({ type: "signup", email, options: { emailRedirectTo: confirmationUrl() } });
+    if (error) toast.error(error.message); else toast.success("Confirmation email sent");
+    setBusy(false);
+  }
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center bg-background px-6">
       <h1 className="font-display text-3xl font-semibold">Create your rescue</h1>
@@ -65,6 +72,7 @@ function SignupPage() {
           <p className="font-bold">Check your email to confirm your account, then sign in.</p>
           <p className="mt-2 text-muted-foreground">We sent a confirmation link to {email}. Once you&apos;ve confirmed, your rescue workspace will be ready.</p>
           <Link to="/auth" search={{}} className="mt-4 block text-center text-sm font-bold text-primary">Go to sign-in →</Link>
+          <Button type="button" variant="outline" disabled={busy} onClick={resend} className="mt-4 w-full">{busy ? "Sending…" : "Resend confirmation"}</Button>
         </div>
       ) : (
         <form onSubmit={submit} className="mt-6 space-y-3">

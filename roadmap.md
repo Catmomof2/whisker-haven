@@ -1,4 +1,5 @@
 # Multi-rescue work
+- [ ] Finish confirmation return, resend confirmation, and email staff invitations; verify with the supplied real inbox.
 - [x] Restore the missing public rescue directory function and verify /rescues loads.
 - [x] Apply the existing public adoption tags SQL only; public RPC returns successfully.
 - [ ] Confirm tags on returned cats (blocked: Whisker Haven has no available cats).
