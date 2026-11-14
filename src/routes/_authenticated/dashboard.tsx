@@ -80,7 +80,10 @@ function Dashboard() {
         }
       />
       <div className="space-y-4 px-5">
-        <Link to="/team" className="block text-sm font-semibold text-primary">Rescue team & adoption link →</Link>
+        <div className="flex items-center justify-between gap-3">
+          <Link to="/rescue" className="text-sm font-semibold text-primary">Rescue dashboard →</Link>
+          <Link to="/team" className="text-sm font-semibold text-primary">Rescue team & adoption link →</Link>
+        </div>
         <div className="rounded-xl bg-warm p-5 text-primary-foreground shadow-soft">
           <p className="text-sm font-semibold opacity-90">Live capacity</p>
           <p className="mt-1 font-display text-4xl font-semibold">
