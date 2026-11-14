@@ -28,6 +28,7 @@ import { Route as RescuesSlugRouteImport } from './routes/rescues.$slug'
 import { Route as AuthenticatedCatsIndexRouteImport } from './routes/_authenticated/cats.index'
 import { Route as AuthenticatedCatsIdRouteImport } from './routes/_authenticated/cats.$id'
 import { Route as AuthenticatedCatsNewRouteImport } from './routes/_authenticated/cats.new'
+import { Route as AuthenticatedRescueAdminRouteImport } from './routes/_authenticated/rescue.admin'
 import { Route as AuthenticatedRescueOutreachRouteImport } from './routes/_authenticated/rescue.outreach'
 
 const IndexRoute = IndexRouteImport.update({
@@ -125,6 +126,12 @@ const AuthenticatedCatsNewRoute = AuthenticatedCatsNewRouteImport.update({
   path: '/cats/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRescueAdminRoute =
+  AuthenticatedRescueAdminRouteImport.update({
+    id: '/admin',
+    path: '/admin',
+    getParentRoute: () => AuthenticatedRescueRoute,
+  } as any)
 const AuthenticatedRescueOutreachRoute =
   AuthenticatedRescueOutreachRouteImport.update({
     id: '/outreach',
@@ -150,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/rescues/$slug': typeof RescuesSlugRoute
   '/cats/$id': typeof AuthenticatedCatsIdRoute
   '/cats/new': typeof AuthenticatedCatsNewRoute
+  '/rescue/admin': typeof AuthenticatedRescueAdminRoute
   '/rescue/outreach': typeof AuthenticatedRescueOutreachRoute
   '/cats/': typeof AuthenticatedCatsIndexRoute
 }
@@ -171,6 +179,7 @@ export interface FileRoutesByTo {
   '/rescues/$slug': typeof RescuesSlugRoute
   '/cats/$id': typeof AuthenticatedCatsIdRoute
   '/cats/new': typeof AuthenticatedCatsNewRoute
+  '/rescue/admin': typeof AuthenticatedRescueAdminRoute
   '/rescue/outreach': typeof AuthenticatedRescueOutreachRoute
   '/cats': typeof AuthenticatedCatsIndexRoute
 }
@@ -194,6 +203,7 @@ export interface FileRoutesById {
   '/rescues/$slug': typeof RescuesSlugRoute
   '/_authenticated/cats/$id': typeof AuthenticatedCatsIdRoute
   '/_authenticated/cats/new': typeof AuthenticatedCatsNewRoute
+  '/_authenticated/rescue/admin': typeof AuthenticatedRescueAdminRoute
   '/_authenticated/rescue/outreach': typeof AuthenticatedRescueOutreachRoute
   '/_authenticated/cats/': typeof AuthenticatedCatsIndexRoute
 }
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/rescues/$slug'
     | '/cats/$id'
     | '/cats/new'
+    | '/rescue/admin'
     | '/rescue/outreach'
     | '/cats/'
   fileRoutesByTo: FileRoutesByTo
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/rescues/$slug'
     | '/cats/$id'
     | '/cats/new'
+    | '/rescue/admin'
     | '/rescue/outreach'
     | '/cats'
   id:
@@ -260,6 +272,7 @@ export interface FileRouteTypes {
     | '/rescues/$slug'
     | '/_authenticated/cats/$id'
     | '/_authenticated/cats/new'
+    | '/_authenticated/rescue/admin'
     | '/_authenticated/rescue/outreach'
     | '/_authenticated/cats/'
   fileRoutesById: FileRoutesById
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCatsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/rescue/admin': {
+      id: '/_authenticated/rescue/admin'
+      path: '/admin'
+      fullPath: '/rescue/admin'
+      preLoaderRoute: typeof AuthenticatedRescueAdminRouteImport
+      parentRoute: typeof AuthenticatedRescueRoute
+    }
     '/_authenticated/rescue/outreach': {
       id: '/_authenticated/rescue/outreach'
       path: '/outreach'
@@ -421,10 +441,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRescueRouteChildren {
+  AuthenticatedRescueAdminRoute: typeof AuthenticatedRescueAdminRoute
   AuthenticatedRescueOutreachRoute: typeof AuthenticatedRescueOutreachRoute
 }
 
 const AuthenticatedRescueRouteChildren: AuthenticatedRescueRouteChildren = {
+  AuthenticatedRescueAdminRoute: AuthenticatedRescueAdminRoute,
   AuthenticatedRescueOutreachRoute: AuthenticatedRescueOutreachRoute,
 }
 
