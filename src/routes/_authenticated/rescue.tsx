@@ -272,6 +272,12 @@ function RescueDashboard() {
         >
           Rescue team & adoption link →
         </Link>
+        <Link
+          to="/rescue/outreach"
+          className="block rounded-xl border border-border bg-card p-4 text-sm font-semibold text-primary"
+      >
+                  Applicant outreach →
+        </Link>
       </div>
     </div>
   );
