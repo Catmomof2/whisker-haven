@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdoptRouteImport } from './routes/adopt'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ForRescuesRouteImport } from './routes/for-rescues'
 import { Route as RescuesRouteImport } from './routes/rescues'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated/applications'
@@ -23,9 +24,11 @@ import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AdoptIdRouteImport } from './routes/adopt.$id'
 import { Route as AuthConfirmRouteImport } from './routes/auth_.confirm'
+import { Route as RescuesSlugRouteImport } from './routes/rescues.$slug'
 import { Route as AuthenticatedCatsIndexRouteImport } from './routes/_authenticated/cats.index'
 import { Route as AuthenticatedCatsIdRouteImport } from './routes/_authenticated/cats.$id'
 import { Route as AuthenticatedCatsNewRouteImport } from './routes/_authenticated/cats.new'
+import { Route as AuthenticatedRescueOutreachRouteImport } from './routes/_authenticated/rescue.outreach'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -44,6 +47,11 @@ const AdoptRoute = AdoptRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForRescuesRoute = ForRescuesRouteImport.update({
+  id: '/for-rescues',
+  path: '/for-rescues',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RescuesRoute = RescuesRouteImport.update({
@@ -97,6 +105,11 @@ const AuthConfirmRoute = AuthConfirmRouteImport.update({
   path: '/auth/confirm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RescuesSlugRoute = RescuesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RescuesRoute,
+} as any)
 const AuthenticatedCatsIndexRoute = AuthenticatedCatsIndexRouteImport.update({
   id: '/cats/',
   path: '/cats/',
@@ -112,41 +125,53 @@ const AuthenticatedCatsNewRoute = AuthenticatedCatsNewRouteImport.update({
   path: '/cats/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRescueOutreachRoute =
+  AuthenticatedRescueOutreachRouteImport.update({
+    id: '/outreach',
+    path: '/outreach',
+    getParentRoute: () => AuthenticatedRescueRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adopt': typeof AdoptRouteWithChildren
   '/auth': typeof AuthRoute
-  '/rescues': typeof RescuesRoute
+  '/for-rescues': typeof ForRescuesRoute
+  '/rescues': typeof RescuesRouteWithChildren
   '/signup': typeof SignupRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/board': typeof AuthenticatedBoardRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/rescue': typeof AuthenticatedRescueRoute
+  '/rescue': typeof AuthenticatedRescueRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
   '/team': typeof AuthenticatedTeamRoute
   '/adopt/$id': typeof AdoptIdRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/rescues/$slug': typeof RescuesSlugRoute
   '/cats/$id': typeof AuthenticatedCatsIdRoute
   '/cats/new': typeof AuthenticatedCatsNewRoute
+  '/rescue/outreach': typeof AuthenticatedRescueOutreachRoute
   '/cats/': typeof AuthenticatedCatsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adopt': typeof AdoptRouteWithChildren
   '/auth': typeof AuthRoute
-  '/rescues': typeof RescuesRoute
+  '/for-rescues': typeof ForRescuesRoute
+  '/rescues': typeof RescuesRouteWithChildren
   '/signup': typeof SignupRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/board': typeof AuthenticatedBoardRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/rescue': typeof AuthenticatedRescueRoute
+  '/rescue': typeof AuthenticatedRescueRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
   '/team': typeof AuthenticatedTeamRoute
   '/adopt/$id': typeof AdoptIdRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/rescues/$slug': typeof RescuesSlugRoute
   '/cats/$id': typeof AuthenticatedCatsIdRoute
   '/cats/new': typeof AuthenticatedCatsNewRoute
+  '/rescue/outreach': typeof AuthenticatedRescueOutreachRoute
   '/cats': typeof AuthenticatedCatsIndexRoute
 }
 export interface FileRoutesById {
@@ -155,18 +180,21 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/adopt': typeof AdoptRouteWithChildren
   '/auth': typeof AuthRoute
-  '/rescues': typeof RescuesRoute
+  '/for-rescues': typeof ForRescuesRoute
+  '/rescues': typeof RescuesRouteWithChildren
   '/signup': typeof SignupRoute
   '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/board': typeof AuthenticatedBoardRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/rescue': typeof AuthenticatedRescueRoute
+  '/_authenticated/rescue': typeof AuthenticatedRescueRouteWithChildren
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/adopt/$id': typeof AdoptIdRoute
   '/auth_/confirm': typeof AuthConfirmRoute
+  '/rescues/$slug': typeof RescuesSlugRoute
   '/_authenticated/cats/$id': typeof AuthenticatedCatsIdRoute
   '/_authenticated/cats/new': typeof AuthenticatedCatsNewRoute
+  '/_authenticated/rescue/outreach': typeof AuthenticatedRescueOutreachRoute
   '/_authenticated/cats/': typeof AuthenticatedCatsIndexRoute
 }
 export interface FileRouteTypes {
@@ -175,6 +203,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adopt'
     | '/auth'
+    | '/for-rescues'
     | '/rescues'
     | '/signup'
     | '/applications'
@@ -185,14 +214,17 @@ export interface FileRouteTypes {
     | '/team'
     | '/adopt/$id'
     | '/auth/confirm'
+    | '/rescues/$slug'
     | '/cats/$id'
     | '/cats/new'
+    | '/rescue/outreach'
     | '/cats/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/adopt'
     | '/auth'
+    | '/for-rescues'
     | '/rescues'
     | '/signup'
     | '/applications'
@@ -203,8 +235,10 @@ export interface FileRouteTypes {
     | '/team'
     | '/adopt/$id'
     | '/auth/confirm'
+    | '/rescues/$slug'
     | '/cats/$id'
     | '/cats/new'
+    | '/rescue/outreach'
     | '/cats'
   id:
     | '__root__'
@@ -212,6 +246,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/adopt'
     | '/auth'
+    | '/for-rescues'
     | '/rescues'
     | '/signup'
     | '/_authenticated/applications'
@@ -222,8 +257,10 @@ export interface FileRouteTypes {
     | '/_authenticated/team'
     | '/adopt/$id'
     | '/auth_/confirm'
+    | '/rescues/$slug'
     | '/_authenticated/cats/$id'
     | '/_authenticated/cats/new'
+    | '/_authenticated/rescue/outreach'
     | '/_authenticated/cats/'
   fileRoutesById: FileRoutesById
 }
@@ -232,7 +269,8 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdoptRoute: typeof AdoptRouteWithChildren
   AuthRoute: typeof AuthRoute
-  RescuesRoute: typeof RescuesRoute
+  ForRescuesRoute: typeof ForRescuesRoute
+  RescuesRoute: typeof RescuesRouteWithChildren
   SignupRoute: typeof SignupRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
 }
@@ -265,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-rescues': {
+      id: '/for-rescues'
+      path: '/for-rescues'
+      fullPath: '/for-rescues'
+      preLoaderRoute: typeof ForRescuesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rescues': {
@@ -337,6 +382,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rescues/$slug': {
+      id: '/rescues/$slug'
+      path: '/$slug'
+      fullPath: '/rescues/$slug'
+      preLoaderRoute: typeof RescuesSlugRouteImport
+      parentRoute: typeof RescuesRoute
+    }
     '/_authenticated/cats/': {
       id: '/_authenticated/cats/'
       path: '/cats'
@@ -358,14 +410,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCatsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/rescue/outreach': {
+      id: '/_authenticated/rescue/outreach'
+      path: '/outreach'
+      fullPath: '/rescue/outreach'
+      preLoaderRoute: typeof AuthenticatedRescueOutreachRouteImport
+      parentRoute: typeof AuthenticatedRescueRoute
+    }
   }
 }
+
+interface AuthenticatedRescueRouteChildren {
+  AuthenticatedRescueOutreachRoute: typeof AuthenticatedRescueOutreachRoute
+}
+
+const AuthenticatedRescueRouteChildren: AuthenticatedRescueRouteChildren = {
+  AuthenticatedRescueOutreachRoute: AuthenticatedRescueOutreachRoute,
+}
+
+const AuthenticatedRescueRouteWithChildren =
+  AuthenticatedRescueRoute._addFileChildren(AuthenticatedRescueRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
   AuthenticatedBoardRoute: typeof AuthenticatedBoardRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedRescueRoute: typeof AuthenticatedRescueRoute
+  AuthenticatedRescueRoute: typeof AuthenticatedRescueRouteWithChildren
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedCatsIdRoute: typeof AuthenticatedCatsIdRoute
@@ -377,7 +447,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
   AuthenticatedBoardRoute: AuthenticatedBoardRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedRescueRoute: AuthenticatedRescueRoute,
+  AuthenticatedRescueRoute: AuthenticatedRescueRouteWithChildren,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedCatsIdRoute: AuthenticatedCatsIdRoute,
@@ -398,12 +468,24 @@ const AdoptRouteChildren: AdoptRouteChildren = {
 
 const AdoptRouteWithChildren = AdoptRoute._addFileChildren(AdoptRouteChildren)
 
+interface RescuesRouteChildren {
+  RescuesSlugRoute: typeof RescuesSlugRoute
+}
+
+const RescuesRouteChildren: RescuesRouteChildren = {
+  RescuesSlugRoute: RescuesSlugRoute,
+}
+
+const RescuesRouteWithChildren =
+  RescuesRoute._addFileChildren(RescuesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdoptRoute: AdoptRouteWithChildren,
   AuthRoute: AuthRoute,
-  RescuesRoute: RescuesRoute,
+  ForRescuesRoute: ForRescuesRoute,
+  RescuesRoute: RescuesRouteWithChildren,
   SignupRoute: SignupRoute,
   AuthConfirmRoute: AuthConfirmRoute,
 }
