@@ -50,7 +50,7 @@ function LandingPage() {
         <Link to="/rescues" className="flex items-center justify-center rounded-xl border border-border bg-card py-3.5 text-sm font-bold text-primary shadow-soft">
           Browse all rescues →
         </Link>
-        <Link to="/signup" className="flex items-center justify-center rounded-xl border border-border bg-card py-3.5 text-sm font-bold text-primary shadow-soft">
+        <Link to="/for-rescues" className="flex items-center justify-center rounded-xl border border-border bg-card py-3.5 text-sm font-bold text-primary shadow-soft">
           Run a rescue? Register yours →
         </Link>
       </div>
