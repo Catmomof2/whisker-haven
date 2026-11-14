@@ -1,12 +1,26 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { saveAdoptionGoal } from "@/lib/data.functions";
+import { monthlyAdoptions } from "@/lib/dashboard-metrics";
 import { supabase } from "@/integrations/supabase/client";
 import { LogOut, Globe, Plus, Kanban, AlertTriangle, ChevronRight } from "lucide-react";
 import { PageHeader, StageBadge, CatAvatar } from "@/components/AppShell";
 import { catsQuery, tasksQuery, appsQuery, settingsQuery, STAGES } from "@/lib/shelter";
 import { getRescue } from "@/lib/rescue.functions";
 
+const rescueQuery = { queryKey: ["rescue"], queryFn: () => getRescue() };
+
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(rescueQuery), context.queryClient.ensureQueryData(catsQuery),
+      context.queryClient.ensureQueryData(tasksQuery), context.queryClient.ensureQueryData(appsQuery),
+      context.queryClient.ensureQueryData(settingsQuery),
+    ]);
+  },
   head: () => ({
     meta: [
       { title: "Dashboard — Whisker Haven Shelter" },
@@ -21,11 +35,13 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const { data: rescue } = useQuery({ queryKey: ["rescue"], queryFn: () => getRescue() });
-  const { data: cats = [] } = useQuery(catsQuery);
-  const { data: tasks = [] } = useQuery(tasksQuery);
-  const { data: apps = [] } = useQuery(appsQuery);
-  const { data: settings } = useQuery(settingsQuery);
+  const { data: rescue } = useSuspenseQuery(rescueQuery);
+  const { data: cats } = useSuspenseQuery(catsQuery);
+  const { data: tasks } = useSuspenseQuery(tasksQuery);
+  const { data: apps } = useSuspenseQuery(appsQuery);
+  const { data: settings } = useSuspenseQuery(settingsQuery);
+  const [goalInput, setGoalInput] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const qc = useQueryClient();
   const navigate = useNavigate();
   async function signOut() {
@@ -40,6 +56,18 @@ function Dashboard() {
   const done = tasks.filter((t) => t.done).length;
   const pending = apps.filter((a) => a.status === "pending").length;
   const priority = cats.filter((c) => c.priority && c.stage !== "adopted");
+  const now = new Date();
+  const adopted = monthlyAdoptions(cats, now);
+  const goal = settings.monthly_adoption_goal;
+  async function saveGoal(e: React.FormEvent) {
+    e.preventDefault(); setSaving(true);
+    try {
+      await saveAdoptionGoal({ data: { goal: Number(goalInput ?? goal) } });
+      await qc.invalidateQueries({ queryKey: ["settings"] });
+      setGoalInput(null); toast.success("Monthly goal saved");
+    } catch { toast.error("Couldn't save the goal"); }
+    finally { setSaving(false); }
+  }
 
   return (
     <div>
@@ -47,7 +75,7 @@ function Dashboard() {
         action={
           <div className="flex gap-2">
             <Link to="/adopt" search={{ rescue: rescue?.slug ?? "" }} aria-label="Public adoption page" className="rounded-full border border-border bg-card p-2.5"><Globe className="h-4 w-4" /></Link>
-            <button onClick={signOut} aria-label="Sign out" className="rounded-full border border-border bg-card p-2.5"><LogOut className="h-4 w-4" /></button>
+            <Button variant="outline" size="icon" onClick={signOut} aria-label="Sign out"><LogOut className="h-4 w-4" /></Button>
           </div>
         }
       />
@@ -79,7 +107,23 @@ function Dashboard() {
           </Link>
         </div>
 
-        <section className="rounded-xl border border-border bg-card p-4">
+        <section className="space-y-3 border-b border-border py-4">
+          <div className="flex items-center justify-between gap-3"><h2 className="text-sm font-bold">Monthly adoption goal</h2><span className="text-xs text-muted-foreground">{now.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}</span></div>
+          <p className="font-display text-3xl font-semibold">{adopted}<span className="text-base text-muted-foreground">{goal > 0 ? ` / ${goal} adoptions` : " adoptions this month"}</span></p>
+          {goal > 0 && <><progress aria-label="Monthly adoption progress" value={Math.min(adopted, goal)} max={goal} className="h-3 w-full accent-primary" /><p className="text-sm text-muted-foreground">{adopted >= goal ? "Goal reached!" : `${goal - adopted} more cats to find a home`}</p></>}
+          <form onSubmit={saveGoal} className="flex items-end gap-3">
+            <label className="min-w-0 flex-1 text-xs font-semibold text-muted-foreground">Adoption goal<input aria-label="Monthly adoption goal" type="number" min={0} max={10000} step={1} required value={goalInput ?? goal} onChange={(e) => setGoalInput(e.target.value)} className="mt-1 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground" /></label>
+            <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save goal"}</Button>
+          </form>
+        </section>
+
+        <section className="space-y-3 border-b border-border py-4">
+          <div className="flex items-center justify-between"><h2 className="text-sm font-bold">Adoption applications</h2><Link to="/applications" className="text-xs font-semibold text-primary">View all →</Link></div>
+          <div className="grid grid-cols-3 gap-3">{["pending", "approved", "declined"].map((status) => <div key={status}><p className="font-display text-2xl font-semibold">{apps.filter((a) => a.status === status).length}</p><p className="text-xs capitalize text-muted-foreground">{status}</p></div>)}</div>
+          {apps.slice(0, 3).map((app) => <Link key={app.id} to="/applications" className="flex items-center justify-between gap-3 border-t border-border py-2"><span className="min-w-0 truncate text-sm font-semibold">{app.applicant_name}</span><span className="text-xs capitalize text-muted-foreground">{app.status}</span></Link>)}
+        </section>
+
+        <section className="border-b border-border py-4">
           <h2 className="mb-3 text-sm font-bold">Cats by stage</h2>
           <div className="space-y-2">
             {STAGES.map((s) => {

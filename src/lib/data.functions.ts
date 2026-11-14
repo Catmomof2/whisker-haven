@@ -146,6 +146,14 @@ export const saveSettings = createServerFn({ method: "POST" }).middleware([requi
     return { ok: true };
   });
 
+export const saveAdoptionGoal = createServerFn({ method: "POST" }).middleware([requireStaff])
+  .inputValidator((d) => z.object({ goal: z.number().int().min(0).max(10000) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("shelter_settings").update({ monthly_adoption_goal: data.goal }).eq("shelter_id", context.shelterId);
+    fail(error);
+    return { ok: true };
+  });
+
 export const createStaffApplication = createServerFn({ method: "POST" }).middleware([requireStaff])
   .inputValidator((d) => z.object({ cat_id: z.string().uuid().nullable(), applicant_name: s(120).trim().min(1), email: z.string().trim().email().max(200), phone: s(40), home_type: s(120), other_pets: s(300), message: s(2000) }).parse(d))
   .handler(async ({ data, context }) => {
