@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/auth/confirm")({
+export const Route = createFileRoute("/auth_/confirm")({
   validateSearch: (s: Record<string, unknown>): { invite?: string } => ({ ...(typeof s["invite"] === "string" && /^[0-9a-f-]{36}$/i.test(s["invite"]) ? { invite: s["invite"] } : {}) }),
   head: () => ({ meta: [
     { title: "Confirm your rescue account — Whisker Haven" },
