@@ -80,6 +80,7 @@ export type Database = {
       }
       cats: {
         Row: {
+          adopted_at: string | null
           age_years: number | null
           bio: string | null
           breed: string | null
@@ -105,6 +106,7 @@ export type Database = {
           vaccinations: string | null
         }
         Insert: {
+          adopted_at?: string | null
           age_years?: number | null
           bio?: string | null
           breed?: string | null
@@ -130,6 +132,7 @@ export type Database = {
           vaccinations?: string | null
         }
         Update: {
+          adopted_at?: string | null
           age_years?: number | null
           bio?: string | null
           breed?: string | null
@@ -252,16 +255,19 @@ export type Database = {
       shelter_settings: {
         Row: {
           capacity: number
+          monthly_adoption_goal: number
           shelter_id: string
           staff_email: string | null
         }
         Insert: {
           capacity?: number
+          monthly_adoption_goal?: number
           shelter_id: string
           staff_email?: string | null
         }
         Update: {
           capacity?: number
+          monthly_adoption_goal?: number
           shelter_id?: string
           staff_email?: string | null
         }

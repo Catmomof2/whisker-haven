@@ -14,3 +14,4 @@
 - Public adoption reads and submissions use narrow database functions through a publishable client; notifications alone use privileged access after resolving the destination rescue.
 - Signup creates a rescue or consumes an email-bound expiring invitation atomically; existing records remain assigned to the original rescue.
 - Signup and staff invitation emails return to the public confirmation page on the published app; staff invitations use managed auth email with invitation metadata so recipients choose their own password without a custom sender domain.
+- Monthly adoption totals use UTC calendar months and database-stamped adopted stage transitions; unknown legacy dates are excluded rather than inferred from intake dates, and goals persist in rescue-scoped settings.
