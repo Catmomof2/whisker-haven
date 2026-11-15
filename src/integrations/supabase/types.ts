@@ -283,20 +283,35 @@ export type Database = {
       }
       shelters: {
         Row: {
+          adoption_heading: string
+          adoption_intro: string
+          adoption_process: string
+          contact_phone: string
           created_at: string
           id: string
+          location: string
           name: string
           slug: string
         }
         Insert: {
+          adoption_heading?: string
+          adoption_intro?: string
+          adoption_process?: string
+          contact_phone?: string
           created_at?: string
           id?: string
+          location?: string
           name: string
           slug: string
         }
         Update: {
+          adoption_heading?: string
+          adoption_intro?: string
+          adoption_process?: string
+          contact_phone?: string
           created_at?: string
           id?: string
+          location?: string
           name?: string
           slug?: string
         }
