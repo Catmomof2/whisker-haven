@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Globe, Stethoscope } from "lucide-react";
 import { CatAvatar, PageHeader, StageBadge } from "@/components/AppShell";
@@ -31,8 +31,13 @@ export const Route = createFileRoute("/_authenticated/rescue")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: RescueDashboard,
+  component: RescueLayout,
 });
+
+function RescueLayout() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  return pathname.replace(/\/$/, "") === "/rescue" ? <RescueDashboard /> : <Outlet />;
+}
 
 const TASK_CATEGORIES = [
   { id: "feeding", label: "Feeding" },

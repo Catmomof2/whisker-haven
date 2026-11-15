@@ -73,7 +73,7 @@ export const submitApplication = createServerFn({ method: "POST" }).inputValidat
   });
 
 const publicPage = z.object({
-  shelter: z.object({ id: z.string().uuid(), name: z.string(), slug: z.string() }),
+  shelter: z.object({ id: z.string().uuid(), name: z.string(), slug: z.string(), location: z.string().default(""), contact_phone: z.string().default(""), adoption_heading: z.string().default("Adult cats looking for home"), adoption_intro: z.string().default(""), adoption_process: z.string().default("") }),
   cats: z.array(z.object({ id: z.string().uuid(), name: z.string(), photo_url: z.string().nullable(), breed: z.string().nullable(), color: z.string().nullable(), age_years: z.number().nullable(), sex: z.string().nullable(), temperament: z.string().nullable(), bio: z.string().nullable(), tags: z.array(z.string()).optional().default([]) })),
 });
 export const listAdoptableCats = createServerFn({ method: "GET" })

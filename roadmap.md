@@ -1,4 +1,5 @@
 # Multi-rescue work
+- [x] Add editable rescue details and public adoption text to admin; saved text verified on public adoption page and goal persisted after reload; original values restored.
 - [ ] Walk a new rescue through signup, inbox confirmation, staff invitation, adoption page, and dashboard (needs two recipient inboxes and confirmation clicks).
 - [x] Add rescue-scoped stage/application totals and a saved monthly adoption goal with dated adoption tracking; goal persistence verified while signed in.
 - [ ] Finish real-inbox confirmation verification (confirmation page, resend, and staff email invitation implemented; supplied account created as staff, waiting for recipient to open email).

@@ -71,10 +71,13 @@ function AdoptPage() {
     <div className="mx-auto min-h-screen max-w-md bg-background pb-12">
       <header className="px-5 pb-4 pt-8">
         <h1 className="font-display text-3xl font-semibold">{page?.shelter.name ?? "Rescue not found"}</h1>
-        <p className="mt-2 text-lg font-semibold">Adult cats looking for home</p>
-        <p className="mt-2 text-sm text-muted-foreground">Grown-up cats with settled personalities. Find your match and apply in two minutes.</p>
+        <p className="mt-2 break-words text-lg font-semibold">{page?.shelter.adoption_heading}</p>
+        <p className="mt-2 whitespace-pre-line break-words text-sm text-muted-foreground">{page?.shelter.adoption_intro}</p>
+        {page?.shelter.location && <p className="mt-3 break-words text-sm text-muted-foreground">{page.shelter.location}</p>}
+        {page?.shelter.contact_phone && <p className="mt-1 break-words text-sm text-muted-foreground">{page.shelter.contact_phone}</p>}
       </header>
       <div className="space-y-4 px-5">
+        {page?.shelter.adoption_process && <section className="border-y border-border py-4"><h2 className="font-display text-xl font-semibold">Adoption process</h2><p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed">{page.shelter.adoption_process}</p></section>}
         {!page && <p>This rescue link is not available.</p>}
         {page && cats.length === 0 && <p className="rounded-xl bg-card p-5 text-sm">No cats are available right now — check back soon!</p>}
         {page && cats.length > 0 && (
