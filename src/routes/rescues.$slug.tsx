@@ -58,7 +58,10 @@ function RescueDetailPage() {
     <div className="mx-auto min-h-screen max-w-md bg-background pb-12">
       <header className="px-5 pb-4 pt-8">
         <h1 className="font-display text-3xl font-semibold">{page?.shelter.name ?? "Rescue"}</h1>
-        <p className="mt-2 text-lg font-semibold">Adult cats looking for home</p>
+        <p className="mt-2 break-words text-lg font-semibold">{page?.shelter.adoption_heading}</p>
+        {page?.shelter.adoption_intro && <p className="mt-2 whitespace-pre-line break-words text-sm text-muted-foreground">{page.shelter.adoption_intro}</p>}
+        {page?.shelter.location && <p className="mt-2 break-words text-sm text-muted-foreground">{page.shelter.location}</p>}
+        {page?.shelter.contact_phone && <p className="mt-1 break-words text-sm text-muted-foreground">{page.shelter.contact_phone}</p>}
         <p className="mt-2 text-sm text-muted-foreground">
           {page
             ? cats.length === 0

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { PageHeader } from "@/components/AppShell";
 import { catsQuery, settingsQuery } from "@/lib/shelter";
 import { saveAdoptionGoal, saveSettings } from "@/lib/data.functions";
 import { monthlyAdoptions } from "@/lib/dashboard-metrics";
-import { getRescue, getTeam, inviteStaff } from "@/lib/rescue.functions";
+import { getRescue, getTeam, inviteStaff, saveRescueDetails } from "@/lib/rescue.functions";
 
 const rescueQuery = { queryKey: ["rescue"], queryFn: () => getRescue() };
 const teamQuery = { queryKey: ["team"], queryFn: () => getTeam() };
@@ -47,6 +48,10 @@ function RescueAdmin() {
   const { data: cats } = useSuspenseQuery(catsQuery);
   const { data: members } = useSuspenseQuery(teamQuery);
   const qc = useQueryClient();
+  const saveDetails = useServerFn(saveRescueDetails);
+  const [details, setDetails] = useState({ name: rescue.name, location: rescue.location, contact_phone: rescue.contact_phone, adoption_heading: rescue.adoption_heading, adoption_intro: rescue.adoption_intro, adoption_process: rescue.adoption_process });
+  const [savingDetails, setSavingDetails] = useState(false);
+  const detailInput = "mt-1 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground";
 
   const [staffInput, setStaffInput] = useState<string | null>(null);
   const [capInput, setCapInput] = useState<string | null>(null);
@@ -64,6 +69,20 @@ function RescueAdmin() {
   const adopted = monthlyAdoptions(cats, now);
   const goal = settings?.monthly_adoption_goal ?? 0;
   const isOwner = rescue.role === "owner";
+
+  async function onSaveDetails(e: React.FormEvent) {
+    e.preventDefault();
+    setSavingDetails(true);
+    try {
+      await saveDetails({ data: details });
+      await Promise.all([qc.invalidateQueries({ queryKey: ["rescue"] }), qc.invalidateQueries({ queryKey: ["rescues"] }), qc.invalidateQueries({ queryKey: ["adoptable", rescue.slug] })]);
+      toast.success("Rescue details and adoption page saved");
+    } catch {
+      toast.error("Couldn't save rescue details. Please try again.");
+    } finally {
+      setSavingDetails(false);
+    }
+  }
 
   async function copy(value: string) {
     try {
@@ -137,20 +156,38 @@ function RescueAdmin() {
       <div className="space-y-4 px-5">
         <section className="space-y-3 rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-bold">Rescue settings</h2>
-          <div>
-            <p className="text-xs font-semibold text-muted-foreground">Rescue name</p>
-            <p className="font-bold">{rescue.name}</p>
-            <p className="text-xs text-muted-foreground">
-              The name is set when the rescue signs up — there is no way to rename it here.
-            </p>
-          </div>
+          <form onSubmit={onSaveDetails} className="space-y-3">
+            <fieldset disabled={!isOwner || savingDetails} className="space-y-3">
+              <label className="block text-xs font-bold text-muted-foreground">Rescue name
+                <input required maxLength={100} value={details.name} onChange={(e) => setDetails({ ...details, name: e.target.value })} className={detailInput} />
+              </label>
+              <label className="block text-xs font-bold text-muted-foreground">Shelter location
+                <input maxLength={200} value={details.location} onChange={(e) => setDetails({ ...details, location: e.target.value })} className={detailInput} />
+              </label>
+              <label className="block text-xs font-bold text-muted-foreground">Public contact phone
+                <input type="tel" maxLength={40} value={details.contact_phone} onChange={(e) => setDetails({ ...details, contact_phone: e.target.value })} className={detailInput} />
+              </label>
+              <h3 className="border-t border-border pt-3 text-sm font-bold text-foreground">Adoption page text</h3>
+              <label className="block text-xs font-bold text-muted-foreground">Adoption page heading
+                <input required maxLength={160} value={details.adoption_heading} onChange={(e) => setDetails({ ...details, adoption_heading: e.target.value })} className={detailInput} />
+              </label>
+              <label className="block text-xs font-bold text-muted-foreground">Welcome text
+                <textarea rows={4} maxLength={2000} value={details.adoption_intro} onChange={(e) => setDetails({ ...details, adoption_intro: e.target.value })} className={detailInput} />
+              </label>
+              <label className="block text-xs font-bold text-muted-foreground">Adoption process
+                <textarea rows={5} maxLength={4000} value={details.adoption_process} onChange={(e) => setDetails({ ...details, adoption_process: e.target.value })} className={detailInput} />
+              </label>
+              {isOwner && <Button type="submit" className="w-full">{savingDetails ? "Saving…" : "Save rescue details"}</Button>}
+            </fieldset>
+            {!isOwner && <p className="text-sm text-muted-foreground">Only the rescue owner can edit these details.</p>}
+          </form>
           <div>
             <p className="text-xs font-semibold text-muted-foreground">Public adoption page</p>
             <a
               className="block break-all text-sm text-primary underline"
               href={`/adopt?rescue=${rescue.slug}`}
             >
-              /adopt?rescue={rescue.slug}
+              View adoption page →
             </a>
             <Button
               variant="outline"
