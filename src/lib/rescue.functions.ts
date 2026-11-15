@@ -2,6 +2,16 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireStaff } from "@/lib/staff";
 import { confirmationUrl } from "@/lib/auth-flow";
+import { rescueDetailsSchema, requireRescueOwner } from "@/lib/rescue-admin";
+
+export const saveRescueDetails = createServerFn({ method: "POST" }).middleware([requireStaff])
+  .inputValidator((d) => rescueDetailsSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    requireRescueOwner(context.shelterRole);
+    const { data: saved, error } = await context.supabase.from("shelters").update(data).eq("id", context.shelterId).select("id").single();
+    if (error || !saved) throw new Error("Could not save rescue details");
+    return { ok: true };
+  });
 
 export const getRescue = createServerFn({ method: "GET" }).middleware([requireStaff]).handler(async ({ context }) => {
   const { data, error } = await context.supabase.from("shelters").select("*").eq("id", context.shelterId).single();
