@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronRight, Globe, Stethoscope } from "lucide-react";
 import { CatAvatar, PageHeader, StageBadge } from "@/components/AppShell";
 import {
@@ -11,8 +11,14 @@ import {
   type Application,
 } from "@/lib/shelter";
 import { getRescue } from "@/lib/rescue.functions";
+import { RescueAdminPanel } from "@/components/RescueAdminPanel";
+
+const rescueQuery = { queryKey: ["rescue"], queryFn: () => getRescue() };
 
 export const Route = createFileRoute("/_authenticated/rescue")({
+  loader: async ({ context }) => {
+    await Promise.all([rescueQuery, catsQuery, tasksQuery, appsQuery, settingsQuery].map((query) => context.queryClient.ensureQueryData(query)));
+  },
   head: () => ({
     meta: [
       { title: "Rescue dashboard — Whisker Haven Shelter" },
@@ -23,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/rescue")({
       },
       { property: "og:title", content: "Rescue dashboard — Whisker Haven Shelter" },
       {
-        name: "og:description",
+        property: "og:description",
         content:
           "Your rescue at a glance: capacity, cats by stage, applications, tasks, medical holds, and recent activity.",
       },
@@ -36,7 +42,7 @@ export const Route = createFileRoute("/_authenticated/rescue")({
 
 function RescueLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  return pathname.replace(/\/$/, "") === "/rescue" ? <RescueDashboard /> : <Outlet />;
+  return <>{pathname.replace(/\/$/, "") === "/rescue" && <RescueDashboard />}<Outlet /></>;
 }
 
 const TASK_CATEGORIES = [
@@ -46,11 +52,11 @@ const TASK_CATEGORIES = [
 ] as const;
 
 function RescueDashboard() {
-  const { data: rescue } = useQuery({ queryKey: ["rescue"], queryFn: () => getRescue() });
-  const { data: cats = [] } = useQuery(catsQuery);
-  const { data: tasks = [] } = useQuery(tasksQuery);
-  const { data: apps = [] } = useQuery(appsQuery);
-  const { data: settings } = useQuery(settingsQuery);
+  const { data: rescue } = useSuspenseQuery(rescueQuery);
+  const { data: cats } = useSuspenseQuery(catsQuery);
+  const { data: tasks } = useSuspenseQuery(tasksQuery);
+  const { data: apps } = useSuspenseQuery(appsQuery);
+  const { data: settings } = useSuspenseQuery(settingsQuery);
 
   const catName = (id: string | null) => cats.find((c) => c.id === id)?.name ?? "Any cat";
   const inCare = cats.filter((c) => c.stage !== "adopted").length;
@@ -111,6 +117,8 @@ function RescueDashboard() {
             to="/board"
           />
         </div>
+
+        <RescueAdminPanel showCapacity={false} />
 
         <section className="rounded-xl border border-border bg-card p-4">
           <div className="mb-3 flex items-center justify-between">
