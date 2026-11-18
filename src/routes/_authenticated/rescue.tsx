@@ -17,7 +17,13 @@ const rescueQuery = { queryKey: ["rescue"], queryFn: () => getRescue() };
 
 export const Route = createFileRoute("/_authenticated/rescue")({
   loader: async ({ context }) => {
-    await Promise.all([rescueQuery, catsQuery, tasksQuery, appsQuery, settingsQuery].map((query) => context.queryClient.ensureQueryData(query)));
+    await Promise.all([
+      context.queryClient.ensureQueryData(rescueQuery),
+      context.queryClient.ensureQueryData(catsQuery),
+      context.queryClient.ensureQueryData(tasksQuery),
+      context.queryClient.ensureQueryData(appsQuery),
+      context.queryClient.ensureQueryData(settingsQuery),
+    ]);
   },
   head: () => ({
     meta: [

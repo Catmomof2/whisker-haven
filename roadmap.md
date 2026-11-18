@@ -1,5 +1,5 @@
 # Multi-rescue work
-- [ ] Show the shared rescue admin controls directly on the rescue dashboard and verify saving there.
+- [x] Show the shared rescue admin controls directly on the rescue dashboard; details save and goal persistence verified while signed in, with original goal restored.
 - [x] Add editable rescue details and public adoption text to admin; saved text verified on public adoption page and goal persisted after reload; original values restored.
 - [ ] Walk a new rescue through signup, inbox confirmation, staff invitation, adoption page, and dashboard (needs two recipient inboxes and confirmation clicks).
 - [x] Add rescue-scoped stage/application totals and a saved monthly adoption goal with dated adoption tracking; goal persistence verified while signed in.
